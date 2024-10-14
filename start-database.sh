@@ -50,5 +50,5 @@ docker run -d \
   --name $DB_CONTAINER_NAME \
   -e MYSQL_ROOT_PASSWORD="$DB_PASSWORD" \
   -e MYSQL_DATABASE=webapp-papalote \
-  -p "$DB_PORT":3306 \
+  -p "3100":3306 \
   docker.io/mysql && echo "Database container '$DB_CONTAINER_NAME' was successfully created"
