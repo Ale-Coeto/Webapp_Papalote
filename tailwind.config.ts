@@ -5,6 +5,11 @@ export default {
   content: ["./src/**/*.tsx"],
   theme: {
     extend: {
+      colors : {
+        'verde': '#12D354',
+        'gris': '#74787A',
+        'fondo': '#F4FAFE',
+      },
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
       },
