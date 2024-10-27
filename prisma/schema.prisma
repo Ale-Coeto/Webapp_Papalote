@@ -76,24 +76,24 @@ model VerificationToken {
 model Zone {
     id             String           @id @default(cuid())
     name           String
-    descriptiuon   String
-    logo           String
+    description   String
+    logo           String?
     color          String
     createdAt      DateTime         @default(now())
     updatedAt      DateTime         @updatedAt
-    Insignia       Insignia[]
-    QuestionAnswer QuestionAnswer[]
-    Exhibition     Exhibition[]
+    insignias       Insignia[]
+    questionAnswers QuestionAnswer[]
+    exhibitions     Exhibition[]
 }
 
 model Insignia {
     id          String @id @default(cuid())
     zone_id     String
-    foto        String
+    foto        String?
     zone_time   String
     description String
     nfc_code    String
-    Zone        Zone   @relation(fields: [zone_id], references: [id])
+    zone        Zone   @relation(fields: [zone_id], references: [id])
 }
 
 model Question {
@@ -106,8 +106,8 @@ model QuestionAnswer {
     id          String   @id @default(cuid())
     question_id String
     zone_id     String
-    Zone        Zone     @relation(fields: [zone_id], references: [id])
-    Question    Question @relation(fields: [question_id], references: [id])
+    zone        Zone     @relation(fields: [zone_id], references: [id])
+    question    Question @relation(fields: [question_id], references: [id])
 }
 
 model Exhibition {
@@ -115,9 +115,9 @@ model Exhibition {
     zone_id     String
     name        String
     is_open     Boolean
-    image       String
+    image       String?
     description String
-    Zone        Zone    @relation(fields: [zone_id], references: [id])
+    zone        Zone    @relation(fields: [zone_id], references: [id])
 }
 
 model ExhibitionVisit {
