@@ -1,6 +1,6 @@
 'use client';
 
-import AddButton from "~/app/_components/AddButton";
+import AddButton from "~/app/_components/Button";
 import Title from "~/app/_components/Title";
 import Card from "~/app/_components/Card";
 import { FaEdit } from "react-icons/fa";
@@ -36,7 +36,7 @@ export default function EventosEspeciales() {
                 </Card>
             </div>
 
-            <Modal title={"Nuevo Evento"} onClose={() => { setOpenNew(false) }} isOpen={openNew} >
+            <Modal title={"Nuevo Evento"} onClose={() => { setOpenNew(false) }} isOpen={openNew} customButtonAction={() => setOpenNew(false)}>
                 <NewEventModal />
             </Modal>
 
