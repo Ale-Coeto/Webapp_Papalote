@@ -6,9 +6,17 @@ export default {
   theme: {
     extend: {
       colors : {
-        'verde': '#12D354',
+        'verde': {
+          DEFAULT: '#12D354',
+          200: '#2DEA6D',
+        },
         'gris': '#74787A',
         'fondo': '#F4FAFE',
+        'texto': '#444444',
+        'azul': {
+          DEFAULT: '#36B4FE',
+          200: '#66C6FF',
+        }
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
