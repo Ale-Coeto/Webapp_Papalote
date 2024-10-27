@@ -2,9 +2,10 @@ import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
-import { getServerAuthSession } from "~/server/auth";
 
-import { RootClientLayout } from "./_components/RootClientLayout";
+import { TRPCReactProvider } from "~/trpc/react";
+import { getServerAuthSession } from "~/server/auth";
+import { NextAuthProvider } from "~/app/_components/NextAuthProvider";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -19,11 +20,11 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-    <body>
-      <RootClientLayout session={session ?? undefined}>
-        {children}
-      </RootClientLayout>
-    </body>
-  </html>
+      <body>
+        <TRPCReactProvider>
+          <NextAuthProvider>{children}</NextAuthProvider>
+        </TRPCReactProvider>
+      </body>
+    </html>
   );
 }
