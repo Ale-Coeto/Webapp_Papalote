@@ -16,7 +16,7 @@ export default function RootLayout({
 
   const session = useSession();
 
-  if (!session.data) {
+  if (session.status === "unauthenticated") {
     redirect("/");
   }
 
