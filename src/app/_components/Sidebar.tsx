@@ -21,15 +21,13 @@ import { twMerge } from "tailwind-merge";
 interface SidebarProps {
   isCollapsed: boolean;
   toggleCollapse: () => void;
-  session?: Session;
+  session?: Session | null;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
   toggleCollapse,
-  session,
 }) => {
-  console.log(session);
 
   return (
     <div

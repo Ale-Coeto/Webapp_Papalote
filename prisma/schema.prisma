@@ -34,11 +34,11 @@ model Account {
     provider                 String
     providerAccountId        String
     refresh_token            String? @db.Text
-    access_token             String? // @db.Text
+    access_token             String? @db.Text
     expires_at               Int?
     token_type               String?
     scope                    String?
-    id_token                 String? // @db.Text
+    id_token                 String? @db.Text
     session_state            String?
     user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     refresh_token_expires_in Int?
@@ -66,9 +66,68 @@ model User {
 }
 
 model VerificationToken {
-    identifier String
+    identifier String   @id
     token      String   @unique
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Zone {
+    id             String           @id @default(cuid())
+    name           String
+    descriptiuon   String
+    logo           String
+    color          String
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime         @updatedAt
+    Insignia       Insignia[]
+    QuestionAnswer QuestionAnswer[]
+    Exhibition     Exhibition[]
+}
+
+model Insignia {
+    id          String @id @default(cuid())
+    zone_id     String
+    foto        String
+    zone_time   String
+    description String
+    nfc_code    String
+    Zone        Zone   @relation(fields: [zone_id], references: [id])
+}
+
+model Question {
+    id             String           @id @default(cuid())
+    question       String
+    QuestionAnswer QuestionAnswer[]
+}
+
+model QuestionAnswer {
+    id          String   @id @default(cuid())
+    question_id String
+    zone_id     String
+    Zone        Zone     @relation(fields: [zone_id], references: [id])
+    Question    Question @relation(fields: [question_id], references: [id])
+}
+
+model Exhibition {
+    id          String  @id @default(cuid())
+    zone_id     String
+    name        String
+    is_open     Boolean
+    image       String
+    description String
+    Zone        Zone    @relation(fields: [zone_id], references: [id])
+}
+
+model ExhibitionVisit {
+    id            String   @id @default(cuid())
+    exhibition_id String
+    date          DateTime @default(now())
+    rating        Int?
+}
+
+model Museum_Entrance {
+    id   String   @id @default(cuid())
+    date DateTime @default(now())
 }
