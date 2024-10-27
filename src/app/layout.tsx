@@ -5,8 +5,8 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { getServerAuthSession } from "~/server/auth";
-import { NextAuthProvider } from "~/app/_components/NextAuthProvider";
-import { RedirectDashboard } from "~/app/_components/Redirect";
+import { NextAuthProvider } from "~/app/_components/auth/NextAuthProvider";
+import { RedirectDashboard } from "~/app/_components/auth/Redirect";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
