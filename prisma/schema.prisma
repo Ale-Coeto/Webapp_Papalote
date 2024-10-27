@@ -88,12 +88,14 @@ model Zone {
 
 model Insignia {
     id          String @id @default(cuid())
-    zone_id     String
+    zone_id     String?
+    special_event_id String?
     foto        String
     zone_time   String
     description String
     nfc_code    String
-    Zone        Zone   @relation(fields: [zone_id], references: [id])
+    Zone        Zone?   @relation(fields: [zone_id], references: [id])
+    SpecialEvent SpecialEvent? @relation(fields: [special_event_id], references: [id])
 }
 
 model Question {
@@ -130,4 +132,14 @@ model ExhibitionVisit {
 model Museum_Entrance {
     id   String   @id @default(cuid())
     date DateTime @default(now())
+}
+
+model SpecialEvent {
+    id          String   @id @default(cuid())
+    name        String
+    start_date        DateTime
+    end_date String
+    description String
+    image       String
+    insignias  Insignia[]
 }

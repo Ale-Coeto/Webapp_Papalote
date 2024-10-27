@@ -37,7 +37,7 @@ export default function EventosEspeciales() {
             </div>
 
             <Modal title={"Nuevo Evento"} onClose={() => { setOpenNew(false) }} isOpen={openNew} customButtonAction={() => setOpenNew(false)}>
-                <NewEventModal />
+                <NewEventModal onClose={() => setOpenNew(false)} />
             </Modal>
 
             <Modal title={"Editar Evento"} onClose={() => { setOpenEdit(false) }} isOpen={openEdit} >
