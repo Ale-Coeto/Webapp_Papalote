@@ -2,7 +2,7 @@
 
 import AddButton from "~/app/_components/Button";
 import Title from "~/app/_components/Title";
-import Card from "~/app/_components/Card";
+import Card from "~/app/_components/card/Card";
 import { FaEdit } from "react-icons/fa";
 import Modal from "~/app/_components/Modal";
 import { use, useEffect, useState } from "react";

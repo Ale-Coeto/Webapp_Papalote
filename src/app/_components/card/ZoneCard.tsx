@@ -2,22 +2,22 @@
 
 import { useState } from "react";
 import { api } from "~/trpc/react";
-import Card from "../_components/Card";
+import Card from "~/app/_components/card/Card";
 
 import BeatLoader from "react-spinners/BeatLoader";
 import Link from "next/link";
-import { FaEdit, FaRegEdit, FaRegTrashAlt, FaTrashAlt } from "react-icons/fa";
-import Modal from "./Modal";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import Modal from "~/app/_components/Modal";
 import { toast } from "~/hooks/use-toast";
-import { AddZoneForm } from "./form/AddZoneForm";
+import { AddZoneForm } from "~/app/_components/form/AddZoneForm";
 
 export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
-  const { data: zone } = api.zone.getZoneById.useQuery({ id: zoneId });
+  const { data: zone } = api.zone.getZoneOverviewById.useQuery({ id: zoneId });
   const deleteZone = api.zone.delete.useMutation({
     onSuccess: async (data) => {
       toast({
-        title: "Zona Borrada!",
-        description: `${data.name} | ${data.createdAt}`,
+        title: "¡Zona Borrada!",
+        description: `${data.name} | ${data.createdAt.toISOString()}`,
       });
     },
     onError: (error) => {
@@ -39,7 +39,7 @@ export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
             ></div>
             <div className="ml-5 mr-auto flex flex-col">
               <p className="font-bold text-gris">
-                <Link href={`/zone/${zoneId}`}>{zone.name}</Link>
+                <Link href={`/dashboard/zones/${zoneId}`}>{zone.name}</Link>
               </p>
               <p>
                 {zone._count.insignias} insignias, {zone._count.exhibitions}{" "}
@@ -75,7 +75,7 @@ export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
           }}
           isOpen={openModalDelete}
         >
-          <p>¿Estás seguro de que quieres borrar la zona "{zone?.name}"?</p>
+          <p>¿Estás seguro de que quieres borrar la zona &quot;{zone?.name}&quot;?</p>
           <button
             className="mt-2 rounded-lg bg-red-500 p-2 text-white"
             onClick={() => {

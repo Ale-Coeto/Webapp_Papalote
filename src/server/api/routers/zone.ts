@@ -3,22 +3,21 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  publicProcedure,
 } from "~/server/api/trpc";
 import { existingZoneSchema } from "~/lib/schemas";
 
 export const zoneRouter = createTRPCRouter({
-  getIds: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db.zone.findMany({ select: { id: true } });
+  getIds: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.zone.findMany({ select: { id: true }, orderBy: { name: "asc" } });
   }),
 
-  getById: publicProcedure
+  getById: protectedProcedure
     .input(z.object({ id: z.string().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.zone.findUnique({ where: { id: input.id } });
     }),
 
-  getZoneById: publicProcedure
+  getZoneOverviewById: protectedProcedure
     .input(z.object({ id: z.string().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.zone.findUnique({
@@ -29,6 +28,8 @@ export const zoneRouter = createTRPCRouter({
           id: true,
           description: true,
           logo: true,
+          createdAt: true,
+          updatedAt: true,
           _count: {
             select: {
               insignias: true,
@@ -39,7 +40,21 @@ export const zoneRouter = createTRPCRouter({
         },
       });
     }),
-
+    getZoneById: protectedProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.zone.findUnique({
+        where: { id: input.id },
+        select: {
+          color: true,
+          name: true,
+          description: true,
+          logo: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+    }),
   createOrModify: protectedProcedure
     .input(existingZoneSchema)
     .mutation(async ({ input, ctx }) => {

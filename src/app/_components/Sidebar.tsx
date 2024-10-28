@@ -57,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isCollapsed={isCollapsed}
           icon={faChartSimple}
           label="Estadísticas"
-          link="/stats"
+          link="/dashboard/stats"
         />
 
         <SideBarElement
@@ -71,14 +71,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isCollapsed={isCollapsed}
           icon={faQuestion}
           label="Cuestionario"
-          link="/questionnaire"
+          link="/dashboard/questionnaire"
         />
 
         <SideBarElement
           isCollapsed={isCollapsed}
           icon={faLocation}
           label="Zonas"
-          link="/zones"
+          link="/dashboard/zones"
         />
         {zoneNames?.map((zone) => (
           <SideBarElement
@@ -86,7 +86,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             isCollapsed={isCollapsed}
             icon={faLocation}
             label={zone.name}
-            link={`/zone/${zone.id}`}
+            link={`/dashboard/zones/${zone.id}`}
             className={`ml-9 ${isCollapsed ? "hidden" : ""}`}
           />
         ))}

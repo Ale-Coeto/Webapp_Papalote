@@ -1,6 +1,6 @@
-import { z } from "zod";
+import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { existingZoneSchema } from "~/lib/schemas";
 import { TextInput } from "./TextInput";
@@ -35,7 +35,7 @@ export const AddZoneForm = ({ onCompleted, defaultValues }: { onCompleted: () =>
     onSuccess: async (data) => {
       toast({
         title: `¡Zona ${verb}!`,
-        description: `${data.name} | ${data.createdAt}`,
+        description: `${data.name} | ${data.createdAt.toISOString()}`,
       });
       await utils.zone.invalidate();
       onCompleted();

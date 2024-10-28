@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import Card from "~/app/_components/Card";
+import Card from "~/app/_components/card/Card";
 import Modal from "~/app/_components/Modal";
-import { AddZoneForm } from "./form/AddZoneForm";
+import { AddZoneForm } from "~/app/_components/form/AddZoneForm";
 
 export const AddZoneCard = () => {
   const [openNew, setOpenNew] = useState(false);

@@ -1,9 +1,9 @@
 import { api, HydrateClient } from "~/trpc/server";
-import { MainTitle } from "../_components/MainTitle";
+import { MainTitle } from "~/app/_components/MainTitle";
 import { AddZoneCard } from "~/app/_components/card/AddZoneCard";
 import { ZoneCard } from "~/app/_components/card/ZoneCard";
 
-export default async function Home() {
+export default async function Zones() {
   const zones = await api.zone.getIds();
 
   return (
