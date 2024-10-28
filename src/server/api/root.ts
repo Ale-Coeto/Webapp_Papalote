@@ -1,5 +1,6 @@
 import { postRouter } from "~/server/api/routers/post";
-import { zoneRouter } from "./routers/zone";
+import { zoneRouter } from "~/server/api/routers/zone";
+import { insigniaRouter } from "~/server/api/routers/insignia";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { specialEventRouter } from "./routers/specialEvent";
 
@@ -11,6 +12,7 @@ import { specialEventRouter } from "./routers/specialEvent";
 export const appRouter = createTRPCRouter({
   post: postRouter,
   zone: zoneRouter,
+  insignia: insigniaRouter,
   specialEventRouter: specialEventRouter,
 });
 
