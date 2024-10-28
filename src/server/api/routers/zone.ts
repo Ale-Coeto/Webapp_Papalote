@@ -5,7 +5,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { existingZoneSchema, zoneSchema } from "~/lib/schemas";
+import { existingZoneSchema } from "~/lib/schemas";
 
 export const zoneRouter = createTRPCRouter({
   getIds: publicProcedure.query(async ({ ctx }) => {
@@ -18,7 +18,7 @@ export const zoneRouter = createTRPCRouter({
       return await ctx.db.zone.findUnique({ where: { id: input.id } });
     }),
 
-  getOverviewById: publicProcedure
+  getZoneById: publicProcedure
     .input(z.object({ id: z.string().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.zone.findUnique({
@@ -26,6 +26,9 @@ export const zoneRouter = createTRPCRouter({
         select: {
           color: true,
           name: true,
+          id: true,
+          description: true,
+          logo: true,
           _count: {
             select: {
               insignias: true,
@@ -37,24 +40,22 @@ export const zoneRouter = createTRPCRouter({
       });
     }),
 
-  modify: protectedProcedure
+  createOrModify: protectedProcedure
     .input(existingZoneSchema)
-    .mutation(async ({ ctx, input }) => {
-      return ctx.db.zone.update({
-        where: { id: input.id },
-        data: {
-          name: input.zoneName,
-          description: input.zoneDescription,
-          color: input.zoneColor,
-          logo: input.zoneLogo,
-        },
-      });
-    }),
-
-  create: protectedProcedure
-    .input(zoneSchema)
     .mutation(async ({ input, ctx }) => {
-      const zone = await ctx.db.zone.create({
+      if (input.id) {
+        return ctx.db.zone.update({
+          where: { id: input.id },
+          data: {
+            name: input.zoneName,
+            description: input.zoneDescription,
+            color: input.zoneColor,
+            logo: input.zoneLogo,
+          },
+        });
+      }
+
+      return await ctx.db.zone.create({
         data: {
           name: input.zoneName,
           description: input.zoneDescription,
@@ -62,8 +63,6 @@ export const zoneRouter = createTRPCRouter({
           logo: input.zoneLogo,
         },
       });
-
-      return zone;
     }),
 
   delete: protectedProcedure
@@ -71,4 +70,16 @@ export const zoneRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       return ctx.db.zone.delete({ where: { id: input.id } });
     }),
+
+  getNames: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.zone.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+  }),
 });

@@ -17,6 +17,7 @@ import Link from "next/link";
 import React from "react";
 
 import { twMerge } from "tailwind-merge";
+import { api } from "~/trpc/react";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -28,6 +29,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
   toggleCollapse,
 }) => {
+  const { data: zoneNames, isLoading } = api.zone.getNames.useQuery();
+
   return (
     <div
       className={`flex flex-col ${isCollapsed ? "w-20" : "w-64"} transition-width fixed left-0 top-0 z-40 h-screen justify-center bg-white text-gris shadow-lg duration-300`}
@@ -77,6 +80,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           label="Zonas"
           link="/zones"
         />
+        {zoneNames?.map((zone) => (
+          <SideBarElement
+            key={zone.id}
+            isCollapsed={isCollapsed}
+            icon={faLocation}
+            label={zone.name}
+            link={`/zone/${zone.id}`}
+            className={`ml-9 ${isCollapsed ? "hidden" : ""}`}
+          />
+        ))}
 
         <div className="mt-auto border-t-[1px] border-gray-300">
           <SideBarElement
