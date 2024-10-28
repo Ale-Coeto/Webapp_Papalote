@@ -2,28 +2,39 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { api } from "~/trpc/react";
-import { zoneSchema } from "~/lib/schemas";
+import { existingZoneSchema } from "~/lib/schemas";
 import { TextInput } from "./TextInput";
 import { ErrorMessage } from "./ErrorMessage";
 import { useToast } from "~/hooks/use-toast";
 
-type FormData = z.infer<typeof zoneSchema>;
+type FormData = z.infer<typeof existingZoneSchema>;
 
-export const AddZoneForm = ({ onCompleted }: { onCompleted: () => void }) => {
+export const AddZoneForm = ({ onCompleted, defaultValues }: { onCompleted: () => void; defaultValues?: FormData}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(zoneSchema),
+    resolver: zodResolver(existingZoneSchema),
+    defaultValues: {
+      zoneColor: defaultValues?.zoneColor,
+      zoneDescription: defaultValues?.zoneDescription,
+      zoneLogo: defaultValues?.zoneLogo,
+      zoneName: defaultValues?.zoneName,
+      id: defaultValues?.id,
+    },
   });
+
   const { toast } = useToast();
   const utils = api.useUtils();
 
-  const createZone = api.zone.create.useMutation({
+  const action = defaultValues ? "Modificar" : "Crear";
+  const verb = defaultValues ? "modificada" : "creada";
+
+  const createZone = api.zone.createOrModify.useMutation({
     onSuccess: async (data) => {
       toast({
-        title: "Zona creada!",
+        title: `¡Zona ${verb}!`,
         description: `${data.name} | ${data.createdAt}`,
       });
       await utils.zone.invalidate();
@@ -71,7 +82,7 @@ export const AddZoneForm = ({ onCompleted }: { onCompleted: () => void }) => {
           )}
         </div>
         <button className="rounded-lg bg-verde p-3 text-white" type="submit">
-          Crear
+          {action} Zona
         </button>
       </div>
     </form>

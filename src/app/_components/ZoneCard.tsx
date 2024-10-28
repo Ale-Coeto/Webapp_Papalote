@@ -6,12 +6,13 @@ import Card from "../_components/Card";
 
 import BeatLoader from "react-spinners/BeatLoader";
 import Link from "next/link";
-import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
+import { FaEdit, FaRegEdit, FaRegTrashAlt, FaTrashAlt } from "react-icons/fa";
 import Modal from "./Modal";
 import { toast } from "~/hooks/use-toast";
+import { AddZoneForm } from "./form/AddZoneForm";
 
 export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
-  const { data: zone } = api.zone.getOverviewById.useQuery({ id: zoneId });
+  const { data: zone } = api.zone.getZoneById.useQuery({ id: zoneId });
   const deleteZone = api.zone.delete.useMutation({
     onSuccess: async (data) => {
       toast({
@@ -25,6 +26,7 @@ export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
   });
 
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [openModalEdit, setOpenModalEdit] = useState(false);
 
   return (
     <>
@@ -44,9 +46,14 @@ export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
                 exhibiciones, {zone._count.questionAnswers} respuestas de zona.
               </p>
             </div>
-            <div className="ml-auto flex flex-row gap-x-6 text-gris">
-              <FaRegEdit size={25} />
-              <FaRegTrashAlt
+            <div className="ml-auto flex flex-row gap-x-6">
+              <FaEdit
+                className="text-lg text-azul duration-200 hover:text-azul-200"
+                onClick={() => setOpenModalEdit(true)}               
+                size={26}
+              />
+              <FaTrashAlt
+                className="text-red-500 duration-200 hover:text-red-700"
                 onClick={() => setOpenModalDelete(true)}
                 size={25}
               />
@@ -70,7 +77,7 @@ export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
         >
           <p>¿Estás seguro de que quieres borrar la zona "{zone?.name}"?</p>
           <button
-            className="bg-red-500 mt-2 p-2 text-white rounded-lg"
+            className="mt-2 rounded-lg bg-red-500 p-2 text-white"
             onClick={() => {
               deleteZone.mutate({ id: zoneId });
               setOpenModalDelete(false);
@@ -78,6 +85,24 @@ export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
           >
             Borrar
           </button>
+        </Modal>
+      )}
+
+      {openModalEdit && (
+        <Modal
+          title={"Modificar Zona"}
+          onClose={() => {
+            setOpenModalEdit(false);
+          }}
+          isOpen={openModalEdit}
+        >
+          <AddZoneForm defaultValues={zone ?{
+            zoneColor: zone.color,
+            zoneDescription: zone.description,
+            zoneLogo: zone.logo ?? undefined,
+            zoneName: zone.name,
+            id: zone.id,
+          } : undefined} onCompleted={() => setOpenModalEdit(false)} />
         </Modal>
       )}
     </>
