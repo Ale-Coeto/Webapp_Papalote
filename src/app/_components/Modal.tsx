@@ -1,7 +1,6 @@
 'use client';
 
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import Button from "./Button";
 
 export default function Modal({ children, title, onClose, isOpen, customButtonAction, customButtonLabel }: { children: React.ReactNode, title: string, onClose: () => void, isOpen: boolean, customButtonAction?: () => void, customButtonLabel?: string }) {
     return (

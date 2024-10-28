@@ -1,9 +1,7 @@
-
 export default function Title({ text }: { text: string }) {
-    return (
-        <div className="text-gris text-xl font-semibold">
-            <h1>{text}</h1>
-        </div>
-    )
-
+  return (
+    <div className="text-xl font-semibold text-gris">
+      <h1>{text}</h1>
+    </div>
+  );
 }

@@ -17,6 +17,7 @@ import Link from "next/link";
 import React from "react";
 
 import { twMerge } from "tailwind-merge";
+import { api } from "~/trpc/react";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -28,16 +29,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
   toggleCollapse,
 }) => {
+  const { data: zoneNames, isLoading } = api.zone.getNames.useQuery();
 
   return (
     <div
-      className={`flex flex-col ${isCollapsed ? "w-20" : "w-64"} transition-width text-gris fixed left-0 top-0 z-40 h-screen justify-center bg-white shadow-lg duration-300`}
+      className={`flex flex-col ${isCollapsed ? "w-20" : "w-64"} transition-width fixed left-0 top-0 z-40 h-screen justify-center bg-white text-gris shadow-lg duration-300`}
     >
       <div
         className="flex h-20 items-center justify-between px-4"
         onClick={toggleCollapse}
       >
-        <span className="flex items-center space-x-2 text-2xl font-bold hover:cursor-pointer text-black ">
+        <span className="flex items-center space-x-2 text-2xl font-bold text-black hover:cursor-pointer">
           <p>🪁</p>
           {!isCollapsed && <span>Papalote</span>}
         </span>
@@ -55,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isCollapsed={isCollapsed}
           icon={faChartSimple}
           label="Estadísticas"
-          link="/stats"
+          link="/dashboard/stats"
         />
 
         <SideBarElement
@@ -69,22 +71,33 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isCollapsed={isCollapsed}
           icon={faQuestion}
           label="Cuestionario"
-          link="/questionnaire"
+          link="/dashboard/questionnaire"
         />
 
         <SideBarElement
           isCollapsed={isCollapsed}
           icon={faLocation}
           label="Zonas"
-          link="/zones"
+          link="/dashboard/zones"
         />
+        {zoneNames?.map((zone) => (
+          <SideBarElement
+            key={zone.id}
+            isCollapsed={isCollapsed}
+            icon={faLocation}
+            label={zone.name}
+            link={`/dashboard/zones/${zone.id}`}
+            className={`ml-9 ${isCollapsed ? "hidden" : ""}`}
+          />
+        ))}
 
-        <div className="border-gray-300 mt-auto border-t-[1px]">
+        <div className="mt-auto border-t-[1px] border-gray-300">
           <SideBarElement
             isCollapsed={isCollapsed}
             icon={faSignOutAlt}
             label="Salir"
             link="/"
+            exit={true}
           />
         </div>
       </nav>
@@ -98,24 +111,32 @@ const SideBarElement = ({
   label,
   link,
   className,
+  exit,
 }: {
   isCollapsed: boolean;
   icon: IconDefinition;
   label: string;
   link: string;
   className?: string;
+  exit?: boolean;
 }) => {
   return (
     <Link
       href={link}
       className={twMerge(
-        "flex items-center justify-center px-6 py-3 transition hover:bg-green-200  duration-200",
+        "flex items-center justify-center px-6 py-3 transition duration-200 hover:bg-green-200",
         className,
       )}
-      onClick={() => signOut({ callbackUrl: "/" })}
+      onClick={() => {
+        if (exit) signOut({ callbackUrl: "/" });
+      }}
     >
       <FontAwesomeIcon icon={icon} className="mr-3 h-5 w-5 self-center" />
-      {!isCollapsed && <span className="flex-grow text-lg text-black font-semibold">{label}</span>}
+      {!isCollapsed && (
+        <span className="flex-grow text-lg font-semibold text-black">
+          {label}
+        </span>
+      )}
     </Link>
   );
 };
