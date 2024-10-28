@@ -68,8 +68,9 @@ export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
           }}
           isOpen={openModalDelete}
         >
-          <p>Estás seguro de que quieres borrar la zona {zone?.name}?</p>
+          <p>¿Estás seguro de que quieres borrar la zona "{zone?.name}"?</p>
           <button
+            className="bg-red-500 mt-2 p-2 text-white rounded-lg"
             onClick={() => {
               deleteZone.mutate({ id: zoneId });
               setOpenModalDelete(false);
