@@ -1,0 +1,140 @@
+import type { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { api } from "~/trpc/react";
+import { existingExhibitionSchema } from "~/lib/schemas";
+import { TextInput } from "./TextInput";
+import { ErrorMessage } from "./ErrorMessage";
+import { useToast } from "~/hooks/use-toast";
+
+type FormData = z.infer<typeof existingExhibitionSchema>;
+
+export const AddExhbitionForm = ({
+  onCompleted,
+  defaultValues,
+  zone_id,
+}: {
+  onCompleted: () => void;
+  defaultValues?: FormData;
+  zone_id: string;
+}) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(existingExhibitionSchema),
+    defaultValues: {
+      exhibitionDescription: defaultValues?.exhibitionDescription,
+      exhibitionId: defaultValues?.exhibitionId,
+      exhibitionImage: defaultValues?.exhibitionImage,
+      exhibitionName: defaultValues?.exhibitionName,
+      exhibitionIsOpen: defaultValues?.exhibitionIsOpen,
+      zone_id: defaultValues?.zone_id ?? zone_id,
+    },
+  });
+
+  const { toast } = useToast();
+  const utils = api.useUtils();
+
+  const action = defaultValues ? "Modificar" : "Crear";
+  const verb = defaultValues ? "modificada" : "creada";
+
+  const createExhibition = api.exhibition.createOrModify.useMutation({
+    onSuccess: async (data) => {
+      toast({
+        title: `Exhibición ${verb}!`,
+        description: `Nombre: ${data.name}`,
+      });
+      await utils.exhibition.invalidate();
+      onCompleted();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const deleteExhibition = api.exhibition.delete.useMutation({
+    onSuccess: async (data) => {
+      toast({
+        title: "Exhibición Borrada!",
+        description: `Nombre: ${data.name}}`,
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    createExhibition.mutate(data);
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="m-3 flex flex-col gap-y-4 text-gris">
+        <div>
+          <label htmlFor="exhibitionName">Nombre de la exhibición</label>
+          <TextInput id="exhibitionName" {...register("exhibitionName")} />
+          {errors.exhibitionName?.message && (
+            <ErrorMessage error={errors.exhibitionName.message} />
+          )}
+        </div>
+        <div>
+          <label htmlFor="exhibitionDescription">
+            Descripción de la exhibición
+          </label>
+          <TextInput
+            id="exhibitionDescription"
+            {...register("exhibitionDescription")}
+          />
+
+          {errors.exhibitionDescription?.message && (
+            <ErrorMessage error={errors.exhibitionDescription.message} />
+          )}
+        </div>
+        <div className="flex flex-row items-center gap-x-4 gap-y-4">
+          <label htmlFor="exhibitionIsOpen">Exhibición abierta</label>
+          <TextInput
+            id="exhibitionIsOpen"
+            type="checkbox"
+            className="h-5 w-5"
+            {...register("exhibitionIsOpen")}
+          />
+
+          {errors.exhibitionIsOpen?.message && (
+            <ErrorMessage error={errors.exhibitionIsOpen.message} />
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="exhibitionImage">Imagen de la exhibición</label>
+          <TextInput id="exhibitionImage" {...register("exhibitionImage")} />
+          {errors.exhibitionImage?.message && (
+            <ErrorMessage error={errors.exhibitionImage.message} />
+          )}
+        </div>
+        <div className="flex flex-row gap-x-5">
+          <button
+            className="w-full rounded-lg bg-verde p-3 text-white"
+            type="submit"
+          >
+            {action} exhibición
+          </button>
+          {defaultValues?.exhibitionId && (
+            <button
+              className="w-full rounded-lg bg-red-500 p-3 text-white"
+              onClick={() => {
+                deleteExhibition.mutate({
+                  id: defaultValues.exhibitionId ?? "",
+                });
+              }}
+            >
+              Eliminar exhibición
+            </button>
+          )}
+        </div>
+      </div>
+    </form>
+  );
+};
