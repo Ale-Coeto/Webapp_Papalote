@@ -39,15 +39,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         className="flex h-20 items-center justify-between px-4"
         onClick={toggleCollapse}
       >
-        <span className="flex items-center space-x-2 text-2xl font-bold text-black hover:cursor-pointer">
+        <span className="flex items-center space-x-2 text-2xl text-texto hover:cursor-pointer">
           <p>🪁</p>
           {!isCollapsed && <span>Papalote</span>}
         </span>
         <button className="text-white focus:outline-none">
           <FontAwesomeIcon
             icon={isCollapsed ? faChevronRight : faChevronLeft}
-            color="black"
-            className="h-4 w-4"
+            // color="azul"
+            className="text-azul h-4 w-4"
           />
         </button>
       </div>
@@ -124,16 +124,16 @@ const SideBarElement = ({
     <Link
       href={link}
       className={twMerge(
-        "flex items-center justify-center px-6 py-3 transition duration-200 hover:bg-green-200",
+        "flex items-center justify-center px-6 py-3 transition duration-200 hover:underline ",
         className,
       )}
       onClick={() => {
         if (exit) signOut({ callbackUrl: "/" });
       }}
     >
-      <FontAwesomeIcon icon={icon} className="mr-3 h-5 w-5 self-center" />
+      <FontAwesomeIcon icon={icon} className={`mr-3 h-5 w-5 self-center ${label == "Salir" ? "text-azul" : "text-verde"}`} />
       {!isCollapsed && (
-        <span className="flex-grow text-lg font-semibold text-black">
+        <span className="flex-grow text-md text-texto">
           {label}
         </span>
       )}
