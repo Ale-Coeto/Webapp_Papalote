@@ -64,7 +64,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isCollapsed={isCollapsed}
           icon={faCalendar}
           label="Eventos Especiales"
-          link="/eventosEspeciales"
+          link="/dashboard/eventosEspeciales"
         />
 
         <SideBarElement
