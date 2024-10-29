@@ -46,7 +46,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button className="text-white focus:outline-none">
           <FontAwesomeIcon
             icon={isCollapsed ? faChevronRight : faChevronLeft}
-            // color="azul"
             className="text-azul h-4 w-4"
           />
         </button>

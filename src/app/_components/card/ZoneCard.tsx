@@ -38,10 +38,10 @@ export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
               style={{ backgroundColor: zone.color }}
             ></div>
             <div className="ml-5 mr-auto flex flex-col">
-              <p className="font-bold text-gris">
+              <p className="font-semibold text-texto">
                 <Link href={`/dashboard/zones/${zoneId}`}>{zone.name}</Link>
               </p>
-              <p>
+              <p className="text-texto">
                 {zone._count.insignias} insignias, {zone._count.exhibitions}{" "}
                 exhibiciones, {zone._count.questionAnswers} respuestas de zona.
               </p>
@@ -49,13 +49,11 @@ export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
             <div className="ml-auto flex flex-row gap-x-6">
               <FaEdit
                 className="text-lg text-azul duration-200 hover:text-azul-200"
-                onClick={() => setOpenModalEdit(true)}               
-                size={26}
+                onClick={() => setOpenModalEdit(true)}
               />
               <FaTrashAlt
                 className="text-red-500 duration-200 hover:text-red-700"
                 onClick={() => setOpenModalDelete(true)}
-                size={25}
               />
             </div>
           </div>
@@ -96,7 +94,7 @@ export const ZoneCard = ({ zoneId }: { zoneId: string }) => {
           }}
           isOpen={openModalEdit}
         >
-          <AddZoneForm defaultValues={zone ?{
+          <AddZoneForm defaultValues={zone ? {
             zoneColor: zone.color,
             zoneDescription: zone.description,
             zoneLogo: zone.logo ?? undefined,
