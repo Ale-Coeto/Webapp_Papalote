@@ -55,6 +55,18 @@ export const AddInsigniaForm = ({
     },
   });
 
+  const deleteInsignia = api.insignia.delete.useMutation({
+    onSuccess: async (data) => {
+      toast({
+        title: "Insignia Borrada!",
+        description: `Nombre: ${data.name}}`,
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   const onSubmit: SubmitHandler<FormData> = (data) => {
     createInsignia.mutate(data);
   };
@@ -96,9 +108,26 @@ export const AddInsigniaForm = ({
             <ErrorMessage error={errors.insigniaLogo.message} />
           )}
         </div>
-        <button className="rounded-lg bg-verde p-3 text-white" type="submit">
-          {action} insignia
-        </button>
+        <div className="flex flex-row gap-x-5">
+          {defaultValues?.insigniaId && (
+            <button
+              className="w-full rounded-lg bg-red-500 p-3 text-white"
+              onClick={() => {
+                deleteInsignia.mutate({
+                  id: defaultValues.insigniaId ?? "",
+                });
+              }}
+            >
+              Eliminar insignia
+            </button>
+          )}
+          <button
+            className="w-full rounded-lg bg-verde p-3 text-white"
+            type="submit"
+          >
+            {action} insignia
+          </button>
+        </div>
       </div>
     </form>
   );
