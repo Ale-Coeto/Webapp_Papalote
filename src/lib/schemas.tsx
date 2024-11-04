@@ -42,3 +42,12 @@ export const existingExhibitionSchema = z.object({
   ...exhibitionSchema.shape,
   exhibitionId: z.string().optional(),
 });
+
+const questionSchema = z.object({
+  question: z.string().min(1, "La pregunta es requerida"),
+});
+
+export const existingQuestionSchema = z.object({
+  ...questionSchema.shape,
+  questionId: z.string().optional(),
+});

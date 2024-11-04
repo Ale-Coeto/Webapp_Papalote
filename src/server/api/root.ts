@@ -4,6 +4,7 @@ import { exhibitionRouter } from "./routers/exhibitions";
 import { insigniaRouter } from "~/server/api/routers/insignia";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { specialEventRouter } from "./routers/specialEvent";
+import { questionRouter } from "~/server/api/routers/question";
 
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   insignia: insigniaRouter,
   specialEventRouter: specialEventRouter,
   exhibition: exhibitionRouter,
+  question: questionRouter,
 });
 
 // export type definition of API
