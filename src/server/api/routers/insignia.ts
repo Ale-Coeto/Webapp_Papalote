@@ -4,6 +4,20 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { existingInsigniaSchema } from "~/lib/schemas";
 
 export const insigniaRouter = createTRPCRouter({
+  get: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.insignia.findMany({
+      select: {
+        id: true,
+        zone_id: true,
+        special_event_id: true,
+        name: true,
+        logo: true,
+        description: true,
+        nfc_code: true,
+      },
+    });
+  }),
+
   getIds: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.insignia.findMany({
       select: { id: true },

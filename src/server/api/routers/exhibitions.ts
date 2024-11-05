@@ -4,6 +4,18 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { existingExhibitionSchema } from "~/lib/schemas";
 
 export const exhibitionRouter = createTRPCRouter({
+  get: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.exhibition.findMany({
+      select: {
+        id: true,
+        zone_id: true,
+        name: true,
+        description: true,
+        image: true,
+        is_open: true,
+      },
+    });
+  }),
   getIds: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.exhibition.findMany({
       select: { id: true },

@@ -19,8 +19,8 @@ export default function EditEventModal({
     setValue,
     formState: { errors },
   } = useForm<SpecialEvent>({ defaultValues: {} });
-  const editEvent = api.specialEventRouter.updateSpecialEvent.useMutation();
-  const deleteEvent = api.specialEventRouter.deleteSpecialEvent.useMutation();
+  const editEvent = api.specialEvent.updateSpecialEvent.useMutation();
+  const deleteEvent = api.specialEvent.deleteSpecialEvent.useMutation();
   const startDate = event.start_date.toISOString().slice(0, 10);
   const endDate = event.end_date.toISOString().slice(0, 10);
 

@@ -14,7 +14,7 @@ export const appRouter = createTRPCRouter({
   post: postRouter,
   zone: zoneRouter,
   insignia: insigniaRouter,
-  specialEventRouter: specialEventRouter,
+  specialEvent: specialEventRouter,
   exhibition: exhibitionRouter,
 });
 

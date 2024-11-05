@@ -1,14 +1,26 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { existingZoneSchema } from "~/lib/schemas";
 
 export const zoneRouter = createTRPCRouter({
+  get: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.zone.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        color: true,
+        logo: true,
+      },
+    });
+  }),
+
   getIds: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db.zone.findMany({ select: { id: true }, orderBy: { name: "asc" } });
+    return await ctx.db.zone.findMany({
+      select: { id: true },
+      orderBy: { name: "asc" },
+    });
   }),
 
   getById: protectedProcedure
@@ -40,7 +52,7 @@ export const zoneRouter = createTRPCRouter({
         },
       });
     }),
-    getZoneById: protectedProcedure
+  getZoneById: protectedProcedure
     .input(z.object({ id: z.string().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.zone.findUnique({
