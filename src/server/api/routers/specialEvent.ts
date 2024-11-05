@@ -48,7 +48,7 @@ export const specialEventRouter = createTRPCRouter({
   updateSpecialEvent: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
+        id: z.number(),
         name: z.string(),
         description: z.string(),
         startDate: z.date(),
@@ -72,7 +72,7 @@ export const specialEventRouter = createTRPCRouter({
     }),
 
   deleteSpecialEvent: protectedProcedure
-    .input(z.string())
+    .input(z.number())
     .mutation(async ({ ctx, input }) => {
       return ctx.db.specialEvent.delete({
         where: {

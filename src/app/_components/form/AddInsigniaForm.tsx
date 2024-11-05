@@ -16,7 +16,7 @@ export const AddInsigniaForm = ({
 }: {
   onCompleted: () => void;
   defaultValues?: FormData;
-  zone_id: string;
+  zone_id: number;
 }) => {
   const {
     register,
@@ -114,7 +114,7 @@ export const AddInsigniaForm = ({
               className="w-full rounded-lg bg-red-500 p-3 text-white"
               onClick={() => {
                 deleteInsignia.mutate({
-                  id: defaultValues.insigniaId ?? "",
+                  id: defaultValues.insigniaId ?? -1,
                 });
               }}
             >

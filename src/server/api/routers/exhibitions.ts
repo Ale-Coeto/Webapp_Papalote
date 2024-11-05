@@ -24,7 +24,7 @@ export const exhibitionRouter = createTRPCRouter({
   }),
 
   getIdsByZone: protectedProcedure
-    .input(z.object({ zoneId: z.string().min(1) }))
+    .input(z.object({ zoneId: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.exhibition.findMany({
         where: { zone_id: input.zoneId },
@@ -34,7 +34,7 @@ export const exhibitionRouter = createTRPCRouter({
     }),
 
   getById: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.object({ id: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.exhibition.findUnique({ where: { id: input.id } });
     }),
@@ -47,7 +47,7 @@ export const exhibitionRouter = createTRPCRouter({
           where: { id: input.exhibitionId },
           data: {
             description: input.exhibitionDescription,
-            image: input.exhibitionImage,
+            image: input.exhibitionImage ?? undefined,
             name: input.exhibitionName,
             is_open: input.exhibitionIsOpen,
             zone_id: input.zone_id,
@@ -67,7 +67,7 @@ export const exhibitionRouter = createTRPCRouter({
     }),
 
   delete: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.object({ id: z.number().min(1) }))
     .mutation(async ({ input, ctx }) => {
       return ctx.db.exhibition.delete({ where: { id: input.id } });
     }),

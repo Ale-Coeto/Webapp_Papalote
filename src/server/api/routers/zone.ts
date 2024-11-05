@@ -24,13 +24,13 @@ export const zoneRouter = createTRPCRouter({
   }),
 
   getById: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.object({ id: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.zone.findUnique({ where: { id: input.id } });
     }),
 
   getZoneOverviewById: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.object({ id: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.zone.findUnique({
         where: { id: input.id },
@@ -53,7 +53,7 @@ export const zoneRouter = createTRPCRouter({
       });
     }),
   getZoneById: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.object({ id: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.zone.findUnique({
         where: { id: input.id },
@@ -93,7 +93,7 @@ export const zoneRouter = createTRPCRouter({
     }),
 
   delete: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.object({ id: z.number().min(1) }))
     .mutation(async ({ input, ctx }) => {
       return ctx.db.zone.delete({ where: { id: input.id } });
     }),
