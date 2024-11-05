@@ -23,11 +23,10 @@ const caller = createCaller({
   headers: new Headers(),
 });
 
-const getData = async (
-  req: NextRequest,
-  { params }: { params: { type: string } },
-) => {
-  const { type } = params ?? {};
+// Example request: http://localhost:3000/api/data?type=zones
+const getData = async (req: NextRequest) => {
+  const type = req.nextUrl.searchParams.get("type");
+
   const dataType = z
     .enum(["zones", "pins", "insignias", "events", "exhibitions"])
     .safeParse(type).data;
