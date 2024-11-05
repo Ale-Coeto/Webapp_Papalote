@@ -4,6 +4,20 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { existingInsigniaSchema } from "~/lib/schemas";
 
 export const insigniaRouter = createTRPCRouter({
+  get: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.insignia.findMany({
+      select: {
+        id: true,
+        zone_id: true,
+        special_event_id: true,
+        name: true,
+        logo: true,
+        description: true,
+        nfc_code: true,
+      },
+    });
+  }),
+
   getIds: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.insignia.findMany({
       select: { id: true },
@@ -12,7 +26,7 @@ export const insigniaRouter = createTRPCRouter({
   }),
 
   getIdsByZone: protectedProcedure
-    .input(z.object({ zoneId: z.string().min(1) }))
+    .input(z.object({ zoneId: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.insignia.findMany({
         where: { zone_id: input.zoneId },
@@ -22,7 +36,7 @@ export const insigniaRouter = createTRPCRouter({
     }),
 
   getById: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.object({ id: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.insignia.findUnique({ where: { id: input.id } });
     }),
@@ -57,7 +71,7 @@ export const insigniaRouter = createTRPCRouter({
     }),
 
   delete: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.object({ id: z.number().min(1) }))
     .mutation(async ({ input, ctx }) => {
       return ctx.db.insignia.delete({ where: { id: input.id } });
     }),

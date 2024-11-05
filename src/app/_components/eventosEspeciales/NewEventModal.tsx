@@ -11,7 +11,7 @@ export default function NewEventModal({ onClose }: { onClose: () => void }) {
     setValue,
     formState: { errors },
   } = useForm<SpecialEvent>({ defaultValues: {} });
-  const addEvent = api.specialEventRouter.createSpecialEvent.useMutation();
+  const addEvent = api.specialEvent.createSpecialEvent.useMutation();
 
   const onSubmit: SubmitHandler<SpecialEvent> = (data: SpecialEvent) => {
     addEvent.mutate({

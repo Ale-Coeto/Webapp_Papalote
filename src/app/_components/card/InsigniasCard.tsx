@@ -12,7 +12,7 @@ export const InsigniasCard = ({
   zoneId,
   className,
 }: {
-  zoneId: string;
+  zoneId: number;
   className?: string;
 }) => {
   const { data: insignias, isLoading } = api.insignia.getIdsByZone.useQuery({

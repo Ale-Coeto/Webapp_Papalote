@@ -5,7 +5,7 @@ import Modal from "~/app/_components/Modal";
 import { AddInsigniaForm } from "~/app/_components/form/AddInsigniaForm";
 import AddButton from "./form/AddButton";
 
-export const AddInsigniaCircle = ({ zoneId }: { zoneId: string }) => {
+export const AddInsigniaCircle = ({ zoneId }: { zoneId: number }) => {
   const [openCreate, setOpenCreate] = useState(false);
 
   return (

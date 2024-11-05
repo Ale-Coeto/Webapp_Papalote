@@ -2,9 +2,9 @@ import { api, HydrateClient } from "~/trpc/server";
 import { MainTitle } from "~/app/_components/MainTitle";
 import { DescriptionCard } from "~/app/_components/card/DescriptionCard";
 import { InsigniasCard } from "~/app/_components/card/InsigniasCard";
-import { ExhibitionsCard } from "~/app/_components/card/ExhbitionsCard";
+import { ExhibitionsCard } from "~/app/_components/card/ExhibitionsCard";
 
-export default async function Zone({ params }: { params: { id: string } }) {
+export default async function Zone({ params }: { params: { id: number } }) {
   const zone = await api.zone.getZoneOverviewById({ id: params.id });
   return (
     <HydrateClient>

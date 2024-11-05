@@ -7,7 +7,7 @@ import { api } from "~/trpc/react";
 import BeatLoader from "react-spinners/BeatLoader";
 import { AddInsigniaForm } from "~/app/_components/form/AddInsigniaForm";
 
-export const InsigniaCircle = ({ insigniaId }: { insigniaId: string }) => {
+export const InsigniaCircle = ({ insigniaId }: { insigniaId: number }) => {
   const [openEdit, setOpenEdit] = useState(false);
   const { data: insignia } = api.insignia.getById.useQuery({ id: insigniaId });
 
@@ -32,7 +32,7 @@ export const InsigniaCircle = ({ insigniaId }: { insigniaId: string }) => {
           isOpen={openEdit}
         >
           <AddInsigniaForm
-            zone_id={insignia.zone_id ?? ""}
+            zone_id={insignia.zone_id}
             onCompleted={() => setOpenEdit(false)}
             defaultValues={{
               insigniaDescription: insignia.description,

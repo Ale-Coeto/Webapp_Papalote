@@ -7,7 +7,7 @@ import { api } from "~/trpc/react";
 import BeatLoader from "react-spinners/BeatLoader";
 import { AddExhbitionForm } from "./form/AddExhibitionForm";
 
-export const ExhibitionCircle = ({ insigniaId }: { insigniaId: string }) => {
+export const ExhibitionCircle = ({ insigniaId }: { insigniaId: number }) => {
   const [openEdit, setOpenEdit] = useState(false);
   const { data: exhibition } = api.exhibition.getById.useQuery({
     id: insigniaId,
@@ -34,7 +34,7 @@ export const ExhibitionCircle = ({ insigniaId }: { insigniaId: string }) => {
           isOpen={openEdit}
         >
           <AddExhbitionForm
-            zone_id={exhibition.zone_id ?? ""}
+            zone_id={exhibition.zone_id}
             onCompleted={() => setOpenEdit(false)}
             defaultValues={{
               exhibitionDescription: exhibition.description,

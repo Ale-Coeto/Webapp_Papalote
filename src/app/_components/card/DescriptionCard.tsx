@@ -9,7 +9,7 @@ import { FaEdit } from "react-icons/fa";
 import Modal from "../Modal";
 import { AddZoneForm } from "../form/AddZoneForm";
 
-export const DescriptionCard = ({ zoneId }: { zoneId: string }) => {
+export const DescriptionCard = ({ zoneId }: { zoneId: number }) => {
   const { data: zone } = api.zone.getZoneOverviewById.useQuery({ id: zoneId });
 
   const [openModalEdit, setOpenModalEdit] = useState(false);

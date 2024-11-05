@@ -16,7 +16,7 @@ export default function EventosEspeciales() {
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<SpecialEvent>();
 
-  const events = api.specialEventRouter.getSpecialEvents.useQuery();
+  const events = api.specialEvent.getSpecialEvents.useQuery();
 
   const handleEdit = (event: SpecialEvent) => {
     setSelectedEvent(event);

@@ -12,7 +12,7 @@ export const ExhibitionsCard = ({
   zoneId,
   className,
 }: {
-  zoneId: string;
+  zoneId: number;
   className?: string;
 }) => {
   const { data: exhibiciones, isLoading } =
