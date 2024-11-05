@@ -132,7 +132,7 @@ model ExhibitionVisit {
   rating        Int?
 }
 
-model Museum_Entrance {
+model MuseumEntrance {
   id   String   @id @default(cuid())
   date DateTime @default(now())
 }
