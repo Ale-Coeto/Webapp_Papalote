@@ -137,6 +137,11 @@ model MuseumEntrance {
   date DateTime @default(now())
 }
 
+model LastFetch {
+  id   Int      @id @default(autoincrement())
+  date DateTime @default(now())
+}
+
 model SpecialEvent {
   id          Int        @id @default(autoincrement())
   name        String
