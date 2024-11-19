@@ -131,3 +131,25 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+export const protectedModificationProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(async ({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    const now = new Date();
+
+    await ctx.db.lastFetch.upsert({
+      create: { id: 1, date: now },
+      update: { date: now },
+      where: { id: 1 },
+    });
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
+  });

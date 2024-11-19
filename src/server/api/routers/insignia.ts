@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  protectedModificationProcedure,
+} from "~/server/api/trpc";
 import { existingInsigniaSchema } from "~/lib/schemas";
 
 export const insigniaRouter = createTRPCRouter({
@@ -41,7 +45,7 @@ export const insigniaRouter = createTRPCRouter({
       return await ctx.db.insignia.findUnique({ where: { id: input.id } });
     }),
 
-  createOrModify: protectedProcedure
+  createOrModify: protectedModificationProcedure
     .input(existingInsigniaSchema)
     .mutation(async ({ input, ctx }) => {
       if (input.insigniaId) {
@@ -70,7 +74,7 @@ export const insigniaRouter = createTRPCRouter({
       });
     }),
 
-  delete: protectedProcedure
+  delete: protectedModificationProcedure
     .input(z.object({ id: z.number().min(1) }))
     .mutation(async ({ input, ctx }) => {
       return ctx.db.insignia.delete({ where: { id: input.id } });

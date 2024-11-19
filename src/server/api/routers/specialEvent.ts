@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  protectedModificationProcedure,
+} from "~/server/api/trpc";
 
 export const specialEventRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -23,7 +27,7 @@ export const specialEventRouter = createTRPCRouter({
     });
   }),
 
-  createSpecialEvent: protectedProcedure
+  createSpecialEvent: protectedModificationProcedure
     .input(
       z.object({
         name: z.string(),
@@ -45,7 +49,7 @@ export const specialEventRouter = createTRPCRouter({
       });
     }),
 
-  updateSpecialEvent: protectedProcedure
+  updateSpecialEvent: protectedModificationProcedure
     .input(
       z.object({
         id: z.number(),
@@ -71,7 +75,7 @@ export const specialEventRouter = createTRPCRouter({
       });
     }),
 
-  deleteSpecialEvent: protectedProcedure
+  deleteSpecialEvent: protectedModificationProcedure
     .input(z.number())
     .mutation(async ({ ctx, input }) => {
       return ctx.db.specialEvent.delete({

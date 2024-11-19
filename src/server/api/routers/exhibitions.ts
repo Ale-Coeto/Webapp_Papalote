@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  protectedModificationProcedure,
+} from "~/server/api/trpc";
 import { existingExhibitionSchema } from "~/lib/schemas";
 
 export const exhibitionRouter = createTRPCRouter({
@@ -39,7 +43,7 @@ export const exhibitionRouter = createTRPCRouter({
       return await ctx.db.exhibition.findUnique({ where: { id: input.id } });
     }),
 
-  createOrModify: protectedProcedure
+  createOrModify: protectedModificationProcedure
     .input(existingExhibitionSchema)
     .mutation(async ({ input, ctx }) => {
       if (input.exhibitionId) {
@@ -66,7 +70,7 @@ export const exhibitionRouter = createTRPCRouter({
       });
     }),
 
-  delete: protectedProcedure
+  delete: protectedModificationProcedure
     .input(z.object({ id: z.number().min(1) }))
     .mutation(async ({ input, ctx }) => {
       return ctx.db.exhibition.delete({ where: { id: input.id } });
