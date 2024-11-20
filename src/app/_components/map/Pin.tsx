@@ -1,32 +1,40 @@
-"use client";
-import React from 'react';
-import { useDraggable } from '@dnd-kit/core';
-import { UUID } from 'crypto';
-import { IoMdPin } from "react-icons/io";
+import React, { useState } from "react";
+import {
+    DndContext,
+    type DragEndEvent,
+    useDraggable,
+} from "@dnd-kit/core";
 
-
-const Pin = ({ id }: { id: string | number }) => {
-    const { attributes, listeners, setNodeRef, transform } = useDraggable({
-        id: id,
-    });
-
-    const style = {
-        transform: transform
-          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-          : undefined,
-        padding: '20px',
-        margin: '10px',
-        backgroundColor: '#f0f0f0',
-        border: '1px solid #ddd',
-        borderRadius: '4px',
-        cursor: 'grab',
-      };
-
-    return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-            <IoMdPin />
-        </div>
-    )
-
+interface PinProps {
+    id: number;
+    x: number;
+    y: number;
+    // onDragEnd: (id: number, x: number, y: number) => void;
 }
+
+const Pin: React.FC<PinProps> = ({ id, x, y }) => {
+    const { attributes, listeners, setNodeRef } = useDraggable({
+        id: `pin-${id}`,
+      });
+    
+      const style: React.CSSProperties = {
+        position: "absolute",
+        top: y,
+        left: x,
+        cursor: "grab",
+      };
+    
+      return (
+        <div
+          ref={setNodeRef}
+          {...listeners}
+          {...attributes}
+          style={style}
+          className="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg"
+        >
+          {id}
+        </div>
+      );
+};
+
 export default Pin;

@@ -79,6 +79,7 @@ model Zone {
   exhibitions     Exhibition[]
   insignias       Insignia[]
   questionAnswers QuestionAnswer[]
+  pins            Pin[]
 }
 
 model Insignia {
@@ -145,4 +146,21 @@ model SpecialEvent {
   description String
   image       String
   insignias   Insignia[]
+}
+
+model LastFetch {
+  id   Int      @id @default(autoincrement())
+  date DateTime @default(now())
+}
+
+model Pin {
+  id          Int      @id @default(autoincrement())
+  name        String
+  piso        Int
+  color       String
+  icon        String
+  x           Int
+  y           Int
+  zone_id     Int?
+  zone        Zone?    @relation(fields: [zone_id], references: [id])
 }
