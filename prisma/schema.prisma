@@ -159,7 +159,7 @@ model Pin {
   piso        Int
   color       String
   icon        String
-  x           Int
+  x           Int   
   y           Int
   zone_id     Int?
   zone        Zone?    @relation(fields: [zone_id], references: [id])
