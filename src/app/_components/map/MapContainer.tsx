@@ -11,27 +11,90 @@ import {
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
-import { useCallback, useState } from "react";
+import { restrictToParentElement } from "@dnd-kit/modifiers";
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import SwitchButton from "./SwitchButton";
 import { Pin } from "@prisma/client";
 import PinIcon from "./Pin";
 import Button from "../Button";
 import { api } from "~/trpc/react";
 import { useToast } from "~/hooks/use-toast";
+import Card from "../card/Card";
+import { FaEdit } from "react-icons/fa";
+import Modal from "../Modal";
+import NewPinModal from "./NewPinModal";
+import EditPinsModal from "./EditPinsModal";
 
 
 const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
-    const [pins, setPins] = useState<Pin[]>(pinList);
+    const divRef = useRef<HTMLDivElement>(null); // Reference for the div
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-    const updatePins = api.pin.updatePins.useMutation();
+    const updateDimensions = () => {
+        if (divRef.current) {
+            const { width, height } = divRef.current.getBoundingClientRect();
+            setDimensions({ width, height });
+        }
+    };
+
+    useEffect(() => {
+        updateDimensions();
+        window.addEventListener("resize", updateDimensions);
+
+        return () => {
+            window.removeEventListener("resize", updateDimensions);
+        };
+    }, []);
+
+    const [pins, setPins] = useState<Pin[]>([]);
+
+    useEffect(() => {
+        if (dimensions.width > 0 && dimensions.height > 0) {
+            // Recalculate pins when dimensions are updated
+            const updatedPins = pinList.map((pin) => ({
+                ...pin,
+                x: (pin.x * dimensions.width) / 100,
+                y: (pin.y * dimensions.height) / 100,
+            }));
+
+            setPins(updatedPins);
+        }
+    }, [dimensions]);
+
+
+    const [openEdit, setOpenEdit] = useState(false);
+    const [selectedPin, setSelectedPin] = useState<Pin>();
+
+    const updatePins = api.pin.updatePins.useMutation({
+        onSuccess: async (data) => {
+            toast({
+                title: `¡Pines actualizados!`,
+                description: `Los pines han sido actualizados correctamente`,
+            })
+        },
+        onError: (error) => {
+            toast({
+                title: `Error al actualizar los pines`,
+                description: `${error}`,
+            })
+        },
+    });
 
     const tag1 = "Piso 1";
     const tag2 = "Piso 2";
+
+    const tags: { [key: string]: number; } = {
+        "Piso 1": 1,
+        "Piso 2": 2,
+    };
     const [variant, setSelected] = useState(tag1);
 
     const toggleVariant = useCallback(() => {
         setSelected(variant === tag1 ? tag2 : tag1);
     }, [variant]);
+
+
 
     const [activePinId, setActivePinId] = useState<number | null>(null);
 
@@ -45,16 +108,14 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
         const { active, delta } = event;
         const pinId = parseInt(active.id.toString().replace("pin-", ""), 10);
 
-
-
         setPins((prevPins) =>
 
             prevPins.map((pin) => {
                 const x = pin.x + delta.x;
                 const y = pin.y + delta.y;
 
-                const boundX = Math.min(Math.max(0, x), 600-32);
-                const boundY = Math.min(Math.max(0, y), 500-32);
+                const boundX = Math.min(Math.max(0, x), dimensions.width - 32);
+                const boundY = Math.min(Math.max(0, y), dimensions.height - 32);
 
                 return (
                     pin.id === pinId
@@ -66,73 +127,121 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
         setActivePinId(null);
     };
 
-    const toast = useToast();
-    const handleSave = () => {
-        //save and toast
-        updatePins.mutate(pins)
-        // toast({
-        //     title: "Pins actualizados",
-        //     description: "Los pins han sido actualizados correctamente",
-        // });
-        console.log(pins);
+    const handleEdit = (pin: Pin) => {
+        setSelectedPin(pin);
+        console.log("PIN", pin);
+        setOpenEdit(true);
     }
+
+    const { toast } = useToast();
+    const handleSave = () => {
+        const copyPins = [...pins];
+        pins.map((copyPins) => {
+            copyPins.x = (copyPins.x / dimensions.width) * 100;
+            copyPins.y = (copyPins.y / dimensions.height) * 100;
+        })
+
+        updatePins.mutate(copyPins);
+        updateDimensions();
+    }
+
+
 
     const activePin = pins.find((pin) => pin.id === activePinId);
 
     return (
-        <div>
-            <SwitchButton variant={variant} onClick={toggleVariant} tag1={tag1} tag2={tag2} />
+        <>
+            <div>
+                <SwitchButton variant={variant} onClick={toggleVariant} tag1={tag1} tag2={tag2} />
+                <p>Width: {dimensions.width}px</p>
+                <p>Height: {dimensions.height}px</p>
+                <div className="flex flex-col md:flex-row gap-6 pt-4 h-max">
+                    <div ref={divRef} className="w-1/2 border bg-gray-200 relative">
 
-            <div className="relative w-[600px] h-[500px] border bg-gray-200">
-
-                <img
-                    src="/Papalote.png"
-                    alt="Map or Background"
-                    className="absolute w-full h-full object-cover"
-                />
-
-                <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-                    {pins.map((pin) => (
-                        <PinIcon
-                            key={pin.id}
-                            id={pin.id}
-                            x={pin.x}
-                            y={pin.y}
-                            color={pin.color}
-                            isDragging={activePinId === pin.id}
+                        <img
+                            src="/Mapa_A.png"
+                            alt="Map or Background"
+                            className="w-full h-auto object-contain"
                         />
-                    ))}
 
-                    <DragOverlay>
-                        {activePin ? (
-                            <div
-                                style={{
-                                    backgroundColor: activePin.color,
-                                }}
-                                className="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg"
-                            >
-                                {activePin.id}
-                            </div>
-                        ) : null}
-                    </DragOverlay>
-                </DndContext>
+                        <div className="absolute top-0 left-0">
 
-                <div className="absolute bottom-4 left-4 bg-white p-2 shadow rounded max-w-xs">
-                    <p>Pin Coordinates:</p>
-                    <ul>
-                        {pins.map((pin) => (
-                            <li key={pin.id}>
-                                Pin {pin.id}: X: {pin.x}, Y: {pin.y}
-                            </li>
+                            <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+                                {pins.map((pin) => (
+                                    <PinIcon
+                                        key={pin.id}
+                                        id={pin.id}
+                                        x={pin.x}
+                                        y={pin.y}
+                                        color={pin.color}
+                                        isDragging={activePinId === pin.id}
+                                        imageRect={dimensions}
+                                    />
+                                ))}
+
+                                <DragOverlay>
+                                    {activePin ? (
+                                        <div
+                                            style={{
+                                                backgroundColor: activePin.color,
+                                            }}
+                                            className="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg"
+                                        >
+                                            {activePin.id}
+                                        </div>
+                                    ) : null}
+                                </DragOverlay>
+                            </DndContext>
+                        </div>
+                    </div>
+
+                    <div className="w-full flex flex-col gap-4">
+                        {pins.map((pin, key) => (
+                            pin.piso === tags[variant] && (
+
+                                <Card key={key}>
+                                    <div className="flex flex-row justify-between">
+                                        <div className="flex flex-col">
+                                            <h1 className="font-semibold text-texto"> {pin.name} </h1>
+                                            <p className="text-texto"> Piso: {pin.piso} </p>
+                                        </div>
+                                        <div className="flex flex-row gap-6">
+                                            <div className="items-left flex flex-col justify-center text-sm text-gris">
+                                                <div>x: {pin.x}</div>
+                                                <div>y: {pin.y}</div>
+                                            </div>
+
+                                            <button onClick={() => handleEdit(pin)}>
+                                                <FaEdit className="text-lg text-azul hover:text-azul-200" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </Card>
+                            )
                         ))}
-                    </ul>
+                    </div>
                 </div>
-            </div>
 
-            <div className="mt-4">
-                <Button label="Guardar" onClick={handleSave} />
+
+                <div className="mt-4 flex">
+                    <Button label="Guardar posiciones" onClick={handleSave} />
+                </div>
+
+
             </div>
-        </div>
+            {selectedPin && (
+                <Modal
+                    title={"Editar Pines"}
+                    onClose={() => {
+                        setOpenEdit(false);
+                    }}
+                    isOpen={openEdit}
+                    customButtonAction={() => setOpenEdit(false)}
+                >
+                    <EditPinsModal onClose={() => setOpenEdit(false)} pin={selectedPin} />
+                </Modal>
+            )}
+        </>
     )
 }
 

@@ -1,6 +1,4 @@
-import { SlDocs } from 'react-icons/sl'
-import { BsChatRight } from 'react-icons/bs'
-import { useCallback, useState } from 'react'
+import { TbCircleNumber1Filled, TbCircleNumber2Filled } from 'react-icons/tb'
 
 
 interface switchButtonProps {
@@ -32,8 +30,8 @@ const SwitchButton: React.FC<switchButtonProps> = ({ variant, onClick, tag1, tag
     return (
         <div className="w-full flex flex-col justify-center z-50 py-2 mt-5 gap-3">
             <div className='flex mx-auto bg-white p-1 rounded-md shadow-md'>
-                <SelectionButton label={tag1} icon={SlDocs} selected={variant == tag1} onClick={onClick} />
-                <SelectionButton label={tag2} icon={BsChatRight} selected={variant == tag2} onClick={onClick} />
+                <SelectionButton label={tag1} icon={TbCircleNumber1Filled} selected={variant == tag1} onClick={onClick} />
+                <SelectionButton label={tag2} icon={TbCircleNumber2Filled} selected={variant == tag2} onClick={onClick} />
             </div>
         </div>
     )

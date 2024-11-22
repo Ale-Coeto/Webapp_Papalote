@@ -58,5 +58,36 @@ export const pinRouter = createTRPCRouter({
         });
     }),
 
+    updatePin: protectedProcedure
+    .input(z.object({
+        id: z.number(),
+        name: z.string(),
+        color: z.string(),
+        icon: z.string(),
+        piso: z.number(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+        return await ctx.db.pin.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                name: input.name,
+                color: input.color,
+                icon: input.icon,
+                piso: input.piso,
+            },
+        });
+    }),
+
+    deletePin: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+        return await ctx.db.pin.delete({
+            where: {
+                id: input,
+            },
+        });
+    }),
 
 })

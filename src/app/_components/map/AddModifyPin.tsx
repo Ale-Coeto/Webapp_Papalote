@@ -10,15 +10,25 @@ const AddModifyPin = () => {
 
     return (
         <div>
-            <AddButton
-                label="Agregar pin"
-                onClick={() => {
-                    setOpenNew(true);
-                }}
-            />
+            <div className="flex flex-row gap-4">
+                {/* <AddButton
+                    label="Editar pines"
+                    onClick={() => {
+                        setOpenEdit(true);
+                    }}
+                /> */}
+
+                <AddButton
+                    label="Agregar pin"
+                    onClick={() => {
+                        setOpenNew(true);
+                    }}
+                />
+
+            </div>
 
             <Modal
-                title={"Nuevo Evento"}
+                title={"Nuevo Pin"}
                 onClose={() => {
                     setOpenNew(false);
                 }}
@@ -27,6 +37,8 @@ const AddModifyPin = () => {
             >
                 <NewPinModal onClose={() => setOpenNew(false)} />
             </Modal>
+
+            
         </div>
     )
 }

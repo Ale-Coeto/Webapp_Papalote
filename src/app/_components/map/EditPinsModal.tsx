@@ -1,11 +1,16 @@
-import { Pin, SpecialEvent } from "@prisma/client";
+import { Pin } from "@prisma/client";
 import Button from "../Button";
 import AddButton from "../form/AddButton";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { useToast } from "~/hooks/use-toast";
 
-const NewPinModal = ({ onClose }: { onClose: () => void }) => {
+interface EditPinsModalProps {
+    onClose: () => void;
+    pin: Pin;
+}
+
+const EditPinsModal = ({ onClose, pin }: EditPinsModalProps) => {
     const {
         handleSubmit,
         register,
@@ -14,25 +19,48 @@ const NewPinModal = ({ onClose }: { onClose: () => void }) => {
     } = useForm<Pin>({ defaultValues: {} });
 
     const { toast } = useToast();
-
-    const addPin = api.pin.createPin.useMutation({
+    
+    const editPin = api.pin.updatePin.useMutation({
         onSuccess: async (data) => {
             toast({
-                title: `¡Pin creado!`,
+                title: `¡Pin actualizado!`,
                 description: `${data.name}`,
             })
         },
         onError: (error) => {
             toast({
-                title: `Error al crear el pin`,
+                title: `Error al actualizar el pin`,
                 description: `${error}`,
             })
         },
     });
-    
+    const deletePin = api.pin.deletePin.useMutation({
+        onSuccess: async (data) => {
+            toast({
+                title: `¡Pin eliminado!`,
+                description: `${data.name}`,
+            })
+        },
+        onError: (error) => {
+            toast({
+                title: `Error al eliminar el pin`,
+                description: `${error}`,
+            })
+        },
+    });
 
-    const onSubmit: SubmitHandler<Pin> = (data: Pin) => {
-        addPin.mutate({
+
+      const handleDelete = () => {
+        if (window.confirm("¿Estás seguro que deseas eliminar este pin?")) {
+          deletePin.mutate(pin.id);
+          onClose();
+        }
+      };
+
+    const onSubmit: SubmitHandler<Pin> = (data) => {
+        console.log(data)
+        editPin.mutate({
+            id: pin.id,
             name: data.name ?? "",
             color: data.color ?? "",
             icon: data.icon ?? "",
@@ -43,16 +71,18 @@ const NewPinModal = ({ onClose }: { onClose: () => void }) => {
         setValue("color", "");
         setValue("icon", "");
         setValue("piso", 1);
+
         onClose();
     };
 
     return (
-        <div className="flex w-full flex-col px-4 pb-4 z-10">
+        <div className="flex w-full flex-col px-4 pb-4">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex w-full flex-col pb-6">
-                    <label>Nombre</label>
+                <div className="flex w-full flex-col pb-4">
+                    <label>Nombre del pin</label>
                     <input
                         id="nombre"
+                        defaultValue={pin.name}
                         type="text"
                         className="w-full rounded-md border-2 px-1"
                         {...register("name")}
@@ -65,6 +95,7 @@ const NewPinModal = ({ onClose }: { onClose: () => void }) => {
                     <div className="flex gap-2">
                         <input
                             id="color"
+                            defaultChecked={pin.piso === 1}
                             type="radio"
                             value={1}
                             className="rounded-md border-2 px-1"
@@ -75,6 +106,7 @@ const NewPinModal = ({ onClose }: { onClose: () => void }) => {
                         <input
                             id="color"
                             type="radio"
+                            defaultChecked={pin.piso === 2}
                             value={2}
                             className="rounded-md border-2 px-1 ml-6"
                             {...register("piso")}
@@ -89,6 +121,7 @@ const NewPinModal = ({ onClose }: { onClose: () => void }) => {
                     <input
                         id="color"
                         type="color"
+                        defaultValue={pin.color}
                         className="rounded-md border-2 px-1"
                         {...register("color")}
                         required
@@ -102,10 +135,14 @@ const NewPinModal = ({ onClose }: { onClose: () => void }) => {
                     </div>
                 </div>
 
-                <Button submit label="Agregar" full />
+
+                <div className="flex flex-row justify-end gap-4">
+                    <Button label="Eliminar" onClick={handleDelete} danger full />
+                    <Button submit label="Guardar" full />
+                </div>
             </form>
         </div>
     );
 }
 
-export default NewPinModal;
+export default EditPinsModal;
