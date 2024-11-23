@@ -28,7 +28,7 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
         piso: pin.piso,
     } });
 
-    const [selected, setSelected] = useState(iconDictionary[pin.icon]?.value || "Sin seleccionar");
+    const [selected, setSelected] = useState(iconDictionary[pin.icon]?.value ?? "Sin seleccionar");
     
     useEffect(() => {
         reset({
@@ -37,7 +37,7 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
             icon: pin.icon,
             piso: pin.piso,
         });
-        setSelected(iconDictionary[pin.icon]?.value || "Sin seleccionar");
+        setSelected(iconDictionary[pin.icon]?.value ?? "Sin seleccionar");
     }, [pin, reset]);
 
     const handleIconSelect = (value: string) => {

@@ -1,6 +1,5 @@
 import { Pin, Zone } from "@prisma/client";
 import Button from "../Button";
-import AddButton from "../form/AddButton";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { useToast } from "~/hooks/use-toast";

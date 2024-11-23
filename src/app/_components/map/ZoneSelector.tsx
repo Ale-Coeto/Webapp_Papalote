@@ -1,4 +1,4 @@
-import { Zone } from "@prisma/client";
+import type { Zone } from "@prisma/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../shadcn/ui/selected";
 
 const ZoneSelector = ({ selected, setSelected, zones }: {

@@ -167,9 +167,10 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                         <div className="absolute top-0 left-0">
 
                             <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-                                {pins.map((pin) => (
+                                {pins.map((pin, key) => (
                                     pin.piso === tags[variant] && (
                                         <PinIcon
+                                            key={key}
                                             pin={pin}
                                             isDragging={activePinId === pin.id}
                                             imageRect={dimensions}
@@ -205,9 +206,8 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                                                 backgroundColor: pin.color,
                                             }}
                                                 className="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg">
-                                                {iconDictionary[pin.icon]?.icon && (
-                                                    iconDictionary[pin.icon]?.icon({})
-                                                )}
+                                              {iconDictionary[pin.icon]?.icon?.({})}
+ 
                                             </div>
 
                                             <div className="flex flex-col">

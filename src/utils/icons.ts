@@ -3,7 +3,7 @@ import { PiToilet } from "react-icons/pi";
 import { FaLeaf, FaPhoneAlt } from "react-icons/fa";
 import { LuStore } from "react-icons/lu";
 import { FaPerson } from "react-icons/fa6";
-import { IconType } from "react-icons";
+import type { IconType } from "react-icons";
 
 export const icons = [
     {

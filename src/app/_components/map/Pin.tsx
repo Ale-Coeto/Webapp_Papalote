@@ -2,7 +2,7 @@ import React from "react";
 import {
     useDraggable,
 } from "@dnd-kit/core";
-import { Pin } from "@prisma/client";
+import type { Pin } from "@prisma/client";
 import { iconDictionary } from "../../../utils/icons";
 
 
