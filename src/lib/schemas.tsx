@@ -32,7 +32,7 @@ const exhibitionSchema = z.object({
   zone_id: z.number().min(1, "La zona es requerida"),
   exhibitionName: z.string().min(1, "El nombre de la exhibición es requerido"),
   exhibitionIsOpen: z.boolean(),
-  exhibitionImage: z.string().optional(),
+  exhibitionImage: z.string(),
   exhibitionDescription: z
     .string()
     .min(1, "La descripción de la exhibición es requerida"),

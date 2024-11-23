@@ -6,7 +6,8 @@ import {
   protectedModificationProcedure,
 } from "~/server/api/trpc";
 import { existingInsigniaSchema } from "~/lib/schemas";
-
+import { getImageLink } from "~/server/supabase";
+import { v4 as uuidv4 } from "uuid";
 export const insigniaRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.insignia.findMany({
@@ -48,12 +49,19 @@ export const insigniaRouter = createTRPCRouter({
   createOrModify: protectedModificationProcedure
     .input(existingInsigniaSchema)
     .mutation(async ({ input, ctx }) => {
+      const newUuid = uuidv4();
+      const imageLink = await getImageLink(
+        input.insigniaLogo,
+        "insignia",
+        input.insigniaId ? String(input.insigniaId) : newUuid,
+      );
+
       if (input.insigniaId) {
         return ctx.db.insignia.update({
           where: { id: input.insigniaId },
           data: {
             description: input.insigniaDescription,
-            logo: input.insigniaLogo,
+            logo: imageLink,
             name: input.insigniaName,
             special_event_id: input.insigniaSpecialEventId,
             zone_id: input.zone_id,
@@ -65,7 +73,7 @@ export const insigniaRouter = createTRPCRouter({
       return await ctx.db.insignia.create({
         data: {
           description: input.insigniaDescription,
-          logo: input.insigniaLogo,
+          logo: imageLink,
           name: input.insigniaName,
           special_event_id: input.insigniaSpecialEventId,
           zone_id: input.zone_id,

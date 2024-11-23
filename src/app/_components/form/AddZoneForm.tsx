@@ -9,10 +9,18 @@ import { useToast } from "~/hooks/use-toast";
 
 type FormData = z.infer<typeof existingZoneSchema>;
 
-export const AddZoneForm = ({ onCompleted, defaultValues }: { onCompleted: () => void; defaultValues?: FormData}) => {
+export const AddZoneForm = ({
+  onCompleted,
+  defaultValues,
+}: {
+  onCompleted: () => void;
+  defaultValues?: FormData;
+}) => {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(existingZoneSchema),
@@ -79,6 +87,31 @@ export const AddZoneForm = ({ onCompleted, defaultValues }: { onCompleted: () =>
           <TextInput id="zoneLogo" {...register("zoneLogo")} />
           {errors.zoneLogo?.message && (
             <ErrorMessage error={errors.zoneLogo.message} />
+          )}
+          <input
+            className="my-3"
+            type="file"
+            name="file"
+            accept=".jpg, .jpeg, .png"
+            onChange={(e) => {
+              if (!e.target.files) return;
+              const file = e.target.files[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onloadend = async () => {
+                if (typeof reader.result === "string") {
+                  setValue("zoneLogo", reader.result);
+                }
+              };
+            }}
+          />
+          {watch("zoneLogo") && (
+            <img
+              src={watch("zoneLogo")}
+              alt="Logo de la zona"
+              className="mx-auto w-64 pt-3"
+            />
           )}
         </div>
         <button className="rounded-lg bg-verde p-3 text-white" type="submit">

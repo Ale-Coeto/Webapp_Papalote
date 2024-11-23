@@ -17,8 +17,11 @@ export default function EditEventModal({
     handleSubmit,
     register,
     setValue,
+    watch,
     formState: { errors },
-  } = useForm<SpecialEvent>({ defaultValues: {} });
+  } = useForm<SpecialEvent>({
+    defaultValues: {},
+  });
   const editEvent = api.specialEvent.updateSpecialEvent.useMutation();
   const deleteEvent = api.specialEvent.deleteSpecialEvent.useMutation();
   const startDate = event.start_date.toISOString().slice(0, 10);
@@ -38,7 +41,7 @@ export default function EditEventModal({
       description: data.description,
       startDate: new Date(data.start_date),
       endDate: new Date(data.end_date),
-      image: "data.infografia",
+      image: data.image,
     });
 
     setValue("name", "");
@@ -104,11 +107,37 @@ export default function EditEventModal({
           <label>Infografía</label>
           <input
             id="infografia"
-            type="file"
-            className=""
-            accept=".jpg, .jpeg, .png"
+            defaultValue={event.image}
+            type="text"
+            className="w-full rounded-md border-2 px-1"
             {...register("image")}
+            required
           />
+          <input
+            className="my-3"
+            type="file"
+            name="file"
+            accept=".jpg, .jpeg, .png"
+            onChange={(e) => {
+              if (!e.target.files) return;
+              const file = e.target.files[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onloadend = async () => {
+                if (typeof reader.result === "string") {
+                  setValue("image", reader.result);
+                }
+              };
+            }}
+          />
+          {watch("image") && (
+            <img
+              src={watch("image")}
+              alt="Infografía del evento"
+              className="mx-auto w-64 pt-3"
+            />
+          )}
         </div>
 
         <div className="flex flex-col pb-6">
