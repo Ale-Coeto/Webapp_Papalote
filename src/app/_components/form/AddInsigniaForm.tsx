@@ -2,7 +2,7 @@ import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { api } from "~/trpc/react";
-import { existingInsigniaSchema, existingZoneSchema } from "~/lib/schemas";
+import { existingInsigniaSchema } from "~/lib/schemas";
 import { TextInput } from "./TextInput";
 import { ErrorMessage } from "./ErrorMessage";
 import { useToast } from "~/hooks/use-toast";
@@ -21,6 +21,8 @@ export const AddInsigniaForm = ({
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(existingInsigniaSchema),
@@ -102,10 +104,37 @@ export const AddInsigniaForm = ({
           )}
         </div>
         <div>
-          <label htmlFor="insigniaLogo">Logo de la insignia</label>
+          <label htmlFor="insigniaLogo">
+            Logo de la insignia (subir imagen o escribir link)
+          </label>
           <TextInput id="insigniaLogo" {...register("insigniaLogo")} />
           {errors.insigniaLogo?.message && (
             <ErrorMessage error={errors.insigniaLogo.message} />
+          )}
+          <input
+            className="my-3"
+            type="file"
+            name="file"
+            accept=".jpg, .jpeg, .png"
+            onChange={(e) => {
+              if (!e.target.files) return;
+              const file = e.target.files[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onloadend = async () => {
+                if (typeof reader.result === "string") {
+                  setValue("insigniaLogo", reader.result);
+                }
+              };
+            }}
+          />
+          {watch("insigniaLogo") && (
+            <img
+              src={watch("insigniaLogo")}
+              alt="Logo de la insignia"
+              className="mx-auto w-64 pt-3"
+            />
           )}
         </div>
         <div className="flex flex-row gap-x-5">
