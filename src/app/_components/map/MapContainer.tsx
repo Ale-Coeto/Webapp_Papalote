@@ -1,17 +1,10 @@
 "use client";
 import {
-    closestCorners,
     DndContext,
     type DragEndEvent,
-    type DragOverEvent,
     DragOverlay,
     type DragStartEvent,
-    MouseSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
 } from "@dnd-kit/core";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import SwitchButton from "./SwitchButton";
@@ -23,7 +16,6 @@ import { useToast } from "~/hooks/use-toast";
 import Card from "../card/Card";
 import { FaEdit } from "react-icons/fa";
 import Modal from "../Modal";
-import NewPinModal from "./NewPinModal";
 import EditPinsModal from "./EditPinsModal";
 
 
@@ -88,7 +80,7 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
         "Piso 1": 1,
         "Piso 2": 2,
     };
-     
+
     const [variant, setSelected] = useState(tag1);
 
     const toggleVariant = useCallback(() => {

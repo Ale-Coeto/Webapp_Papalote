@@ -30,7 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
   toggleCollapse,
 }) => {
-  const { data: zoneNames, isLoading } = api.zone.getNames.useQuery();
+  const { data: zoneNames } = api.zone.getNames.useQuery();
 
   return (
     <div

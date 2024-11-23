@@ -1,7 +1,7 @@
-import { Pin, SpecialEvent } from "@prisma/client";
+import { Pin } from "@prisma/client";
 import Button from "../Button";
 import AddButton from "../form/AddButton";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { useToast } from "~/hooks/use-toast";
 

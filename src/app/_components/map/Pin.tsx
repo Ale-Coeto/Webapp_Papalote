@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-    DndContext,
-    type DragEndEvent,
     useDraggable,
 } from "@dnd-kit/core";
 
@@ -25,8 +23,8 @@ const PinIcon: React.FC<PinProps> = ({ id, x, y, color, isDragging, imageRect })
         top: y,
         left: x,
         cursor: "grab",
-        opacity: isDragging ? 0 : 1, // Hide the pin visually if it's being dragged
-        pointerEvents: isDragging ? "none" : "auto", // Disable interaction while dragging
+        opacity: isDragging ? 0 : 1, 
+        pointerEvents: isDragging ? "none" : "auto",
     };
 
     return (
@@ -46,7 +44,7 @@ const PinIcon: React.FC<PinProps> = ({ id, x, y, color, isDragging, imageRect })
 
                 <div
                     className="absolute left-1/2 -translate-x-1/2 top-[calc(100%)] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[10px]"
-                    style={{ borderTopColor: color }} /* Match the pin's color */
+                    style={{ borderTopColor: color }} 
                     aria-hidden="true"
                 ></div>
 
