@@ -28,7 +28,7 @@ const getData = async (req: NextRequest) => {
   const type = req.nextUrl.searchParams.get("type");
 
   const dataType = z
-    .enum(["zones", "pins", "insignias", "events", "exhibitions", "lastUpdate"])
+    .enum(["zones", "pins", "insignias", "events", "exhibitions", "lastUpdate", "exhibitionVisits", "museumEntrances"])
     .safeParse(type).data;
 
   if (!dataType) {
@@ -61,6 +61,14 @@ const getData = async (req: NextRequest) => {
       return NextResponse.json({
         date: lastUpdate?.date,
       });
+    }
+    else if (dataType === "exhibitionVisits") {
+      const exhibitionVisits = await caller.visit.getExhibitionVisits();
+      return NextResponse.json({ exhibitionVisits });
+    }
+    else if (dataType === "museumEntrances") {
+      const museumEntrances = await caller.museumEntrance.getAll();
+      return NextResponse.json({ museumEntrances });
     }
   } catch (cause) {
     if (cause instanceof TRPCError) {
