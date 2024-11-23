@@ -8,6 +8,7 @@ import {
 import { existingInsigniaSchema } from "~/lib/schemas";
 import { getImageLink } from "~/server/supabase";
 import { v4 as uuidv4 } from "uuid";
+
 export const insigniaRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.insignia.findMany({

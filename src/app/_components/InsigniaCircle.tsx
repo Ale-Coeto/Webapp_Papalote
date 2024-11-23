@@ -13,15 +13,15 @@ export const InsigniaCircle = ({ insigniaId }: { insigniaId: number }) => {
 
   return (
     <>
-      <Circle onClick={() => setOpenEdit(true)}>
-        {insignia ? (
-          <div
-            className="my-4 flex flex-row items-center justify-center gap-x-4 text-gris"
-            style={{ backgroundImage: `url('/Papalote_entrada.png')` }}
-          ></div>
-        ) : (
-          <BeatLoader color="#2DEA6D" />
-        )}
+      <Circle
+        onClick={() => setOpenEdit(true)}
+        style={{
+          backgroundImage: insignia ? `url(${insignia.logo})` : undefined,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {!insignia && <BeatLoader color="#2DEA6D" />}
       </Circle>
       {insignia && openEdit && (
         <Modal

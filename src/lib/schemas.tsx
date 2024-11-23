@@ -4,7 +4,7 @@ const zoneSchema = z.object({
   zoneName: z.string().min(1, "El nombre de la zona es requerido"),
   zoneDescription: z.string().min(1, "La descripción de la zona es requerida"),
   zoneColor: z.string().min(1, "El color de la zona es requerido"),
-  zoneLogo: z.string().optional(),
+  zoneLogo: z.string().min(1, "El logo es requerido"),
 });
 
 export const existingZoneSchema = z.object({

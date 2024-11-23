@@ -21,8 +21,12 @@ export const DescriptionCard = ({ zoneId }: { zoneId: number }) => {
           <div className="flex flex-col">
             <div className="flex flex-row items-center">
               <div
-                className={`h-8 w-8 rounded-full`}
-                style={{ backgroundColor: zone.color }}
+                className={`h-20 w-20 rounded-full`}
+                style={{
+                  backgroundImage: zone ? `url(${zone.logo})` : undefined,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
               ></div>
               <div className="ml-5 mr-auto flex flex-col">
                 <p className="font-bold text-gris">Descripción</p>
