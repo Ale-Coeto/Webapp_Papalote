@@ -156,13 +156,13 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                 </div>
                 <div className="flex flex-col md:flex-row gap-6 pt-4 h-max">
 
-                    <div className="w-1/2 border h-auto bg-gray-200 relative">
+                    <div className="w-1/2 border h-1/2 bg-gray-200 relative">
                         <div ref={divRef}>
                             <img
 
                                 src={variant == tag1 ? "/Mapa_A.png" : "/Mapa_B.png"}
                                 alt="Map or Background"
-                                className="w-full h-auto object-contain"
+                                className="w-full h-full object-contain"
                             />
                         </div>
 
