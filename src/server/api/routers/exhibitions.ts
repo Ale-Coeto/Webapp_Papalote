@@ -1,7 +1,13 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  protectedModificationProcedure,
+} from "~/server/api/trpc";
 import { existingExhibitionSchema } from "~/lib/schemas";
+import { getImageLink } from "~/server/supabase";
+import { v4 as uuidv4 } from "uuid";
 
 export const exhibitionRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -39,15 +45,23 @@ export const exhibitionRouter = createTRPCRouter({
       return await ctx.db.exhibition.findUnique({ where: { id: input.id } });
     }),
 
-  createOrModify: protectedProcedure
+  createOrModify: protectedModificationProcedure
     .input(existingExhibitionSchema)
     .mutation(async ({ input, ctx }) => {
+      const newUuid = uuidv4();
+
+      const imageLink = await getImageLink(
+        input.exhibitionImage,
+        "exhibition",
+        input.exhibitionImage ? String(input.exhibitionImage) : newUuid,
+      );
+
       if (input.exhibitionId) {
         return ctx.db.exhibition.update({
           where: { id: input.exhibitionId },
           data: {
             description: input.exhibitionDescription,
-            image: input.exhibitionImage ?? undefined,
+            image: imageLink,
             name: input.exhibitionName,
             is_open: input.exhibitionIsOpen,
             zone_id: input.zone_id,
@@ -66,7 +80,7 @@ export const exhibitionRouter = createTRPCRouter({
       });
     }),
 
-  delete: protectedProcedure
+  delete: protectedModificationProcedure
     .input(z.object({ id: z.number().min(1) }))
     .mutation(async ({ input, ctx }) => {
       return ctx.db.exhibition.delete({ where: { id: input.id } });

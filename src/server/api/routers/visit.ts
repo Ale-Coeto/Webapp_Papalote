@@ -17,4 +17,17 @@ export const visitRouter = createTRPCRouter({
         },
       });
     }),
+
+    getExhibitionVisits: protectedProcedure.query(async ({ ctx }) => {
+      return ctx.db.exhibitionVisit.findMany();
+    }),
+
+    getVisitsByExhibitionId: protectedProcedure
+    .input(z.object({ exhibitionId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.exhibitionVisit.findMany({
+        where: { exhibition_id: input.exhibitionId },
+      });
+    }),
+
 });

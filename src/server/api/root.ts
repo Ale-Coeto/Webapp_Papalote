@@ -4,6 +4,8 @@ import { insigniaRouter } from "~/server/api/routers/insignia";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { specialEventRouter } from "./routers/specialEvent";
 import { visitRouter } from "~/server/api/routers/visit";
+import { lastUpdateRouter } from "~/server/api/routers/lastUpdate";
+import { museumEntranceRouter } from "./routers/museumEntrance";
 import { pinRouter } from "~/server/api/routers/pin";
 
 /**
@@ -17,6 +19,8 @@ export const appRouter = createTRPCRouter({
   specialEvent: specialEventRouter,
   exhibition: exhibitionRouter,
   visit: visitRouter,
+  lastUpdate: lastUpdateRouter,
+  museumEntrance: museumEntranceRouter,
   pin: pinRouter,
 });
 

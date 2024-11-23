@@ -1,6 +1,12 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  protectedModificationProcedure,
+} from "~/server/api/trpc";
+import { v4 as uuidv4 } from "uuid";
+import { getImageLink } from "~/server/supabase";
 
 export const specialEventRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -23,7 +29,7 @@ export const specialEventRouter = createTRPCRouter({
     });
   }),
 
-  createSpecialEvent: protectedProcedure
+  createSpecialEvent: protectedModificationProcedure
     .input(
       z.object({
         name: z.string(),
@@ -34,18 +40,24 @@ export const specialEventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const newUuid = uuidv4();
+      const imageLink = await getImageLink(
+        input.image,
+        "special_event",
+        newUuid,
+      );
       return ctx.db.specialEvent.create({
         data: {
           name: input.name,
           description: input.description,
           start_date: input.startDate,
           end_date: input.endDate,
-          image: input.image,
+          image: imageLink,
         },
       });
     }),
 
-  updateSpecialEvent: protectedProcedure
+  updateSpecialEvent: protectedModificationProcedure
     .input(
       z.object({
         id: z.number(),
@@ -57,6 +69,12 @@ export const specialEventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const newUuid = uuidv4();
+      const imageLink = await getImageLink(
+        input.image,
+        "special_event",
+        input.id ? String(input.id) : newUuid,
+      );
       return ctx.db.specialEvent.update({
         where: {
           id: input.id,
@@ -66,12 +84,12 @@ export const specialEventRouter = createTRPCRouter({
           description: input.description,
           start_date: input.startDate,
           end_date: input.endDate,
-          image: input.image,
+          image: imageLink,
         },
       });
     }),
 
-  deleteSpecialEvent: protectedProcedure
+  deleteSpecialEvent: protectedModificationProcedure
     .input(z.number())
     .mutation(async ({ ctx, input }) => {
       return ctx.db.specialEvent.delete({

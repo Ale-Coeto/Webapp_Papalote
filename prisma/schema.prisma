@@ -78,6 +78,7 @@ model Zone {
   description     String
   exhibitions     Exhibition[]
   insignias       Insignia[]
+  Pin             Pin[]
   questionAnswers QuestionAnswer[]
   pins            Pin[]
 }
@@ -119,7 +120,7 @@ model Exhibition {
   zone_id     Int
   name        String
   is_open     Boolean
-  image       String?
+  image       String
   description String
   Zone        Zone    @relation(fields: [zone_id], references: [id])
 
@@ -138,6 +139,11 @@ model MuseumEntrance {
   date DateTime @default(now())
 }
 
+model LastFetch {
+  id   Int      @id @default(autoincrement())
+  date DateTime @default(now())
+}
+
 model SpecialEvent {
   id          Int        @id @default(autoincrement())
   name        String
@@ -148,19 +154,17 @@ model SpecialEvent {
   insignias   Insignia[]
 }
 
-model LastFetch {
-  id   Int      @id @default(autoincrement())
-  date DateTime @default(now())
+model Pin {
+  id      Int    @id @default(autoincrement())
+  color   String
+  icon    String
+  x       Int
+  y       Int
+  name    String
+  piso    Int
+  zone_id Int?
+  Zone    Zone?  @relation(fields: [zone_id], references: [id])
+
+  @@index([zone_id], map: "Pin_zone_id_fkey")
 }
 
-model Pin {
-  id          Int      @id @default(autoincrement())
-  name        String
-  piso        Int
-  color       String
-  icon        String
-  x           Int   
-  y           Int
-  zone_id     Int?
-  zone        Zone?    @relation(fields: [zone_id], references: [id])
-}

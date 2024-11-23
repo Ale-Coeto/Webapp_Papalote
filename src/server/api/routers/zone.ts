@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  protectedModificationProcedure,
+} from "~/server/api/trpc";
 import { existingZoneSchema } from "~/lib/schemas";
 
 export const zoneRouter = createTRPCRouter({
@@ -67,7 +71,7 @@ export const zoneRouter = createTRPCRouter({
         },
       });
     }),
-  createOrModify: protectedProcedure
+  createOrModify: protectedModificationProcedure
     .input(existingZoneSchema)
     .mutation(async ({ input, ctx }) => {
       if (input.id) {
@@ -92,7 +96,7 @@ export const zoneRouter = createTRPCRouter({
       });
     }),
 
-  delete: protectedProcedure
+  delete: protectedModificationProcedure
     .input(z.object({ id: z.number().min(1) }))
     .mutation(async ({ input, ctx }) => {
       return ctx.db.zone.delete({ where: { id: input.id } });
