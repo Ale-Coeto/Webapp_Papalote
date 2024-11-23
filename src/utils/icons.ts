@@ -1,8 +1,9 @@
 // icons.ts
 import { PiToilet } from "react-icons/pi";
-import { FaLeaf, FaPhoneAlt } from "react-icons/fa";
-import { LuStore } from "react-icons/lu";
-import { FaPerson } from "react-icons/fa6";
+import { FaChild, FaCloud, FaLeaf, FaPaw, FaPhoneAlt } from "react-icons/fa";
+import { LuPaintbrush2, LuStore, LuSun, LuTestTubes, LuWind } from "react-icons/lu";
+import { FaCartShopping, FaEarthAmericas } from "react-icons/fa6";
+import { MdOfflineBolt } from "react-icons/md";
 import type { IconType } from "react-icons";
 
 export const icons = [
@@ -14,23 +15,68 @@ export const icons = [
     {
         name: "Hoja",
         icon: FaLeaf,
-        value: "hoja",
+        value: "leaf",
     },
     {
         name: "Teléfono",
         icon: FaPhoneAlt,
-        value: "telefono",
+        value: "phone",
     },
     {
         name: "Persona",
-        icon: FaPerson,
-        value: "a",
+        icon: FaChild,
+        value: "figure.child",
     },
     {
         name: "Tienda",
         icon: LuStore,
-        value: "x",
+        value: "storefront",
     },
+    {
+        name: "Carrito",
+        icon: FaCartShopping,
+        value: "cart",
+    },
+    {
+        name: "Brocha",
+        icon: LuPaintbrush2,
+        value: "paintbrush",
+    },
+    {
+        name: "Experimentos",
+        icon: LuTestTubes,
+        value: "testtube.2",
+    },
+    {
+        name: "Sol",
+        icon: LuSun,
+        value: "sun.max",
+    },
+    {
+        name: "Nube",
+        icon: FaCloud,
+        value: "cloud.fill",
+    },
+    {
+        name: "Planeta",
+        icon: FaEarthAmericas,
+        value: "globe.americas.fill",
+    },
+    {
+        name: "Huella",
+        icon: FaPaw,
+        value: "pawprint.fill",
+    },
+    {
+        name: "Rayo",
+        icon: MdOfflineBolt,
+        value: "bolt.circle.fill",
+    },
+    {
+        name: "Viento",
+        icon: LuWind,
+        value: "wind",
+    }
 ];
 
 export const iconDictionary = icons.reduce((dict, icon) => {
