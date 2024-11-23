@@ -49,5 +49,16 @@ const questionSchema = z.object({
 
 export const existingQuestionSchema = z.object({
   ...questionSchema.shape,
-  questionId: z.string().optional(),
+  questionId: z.number().optional(),
+});
+
+const questionAnswerSchema = z.object({
+  answer: z.string().min(1, "La respuesta es requerida"),
+  zone_id: z.number().min(0, "La zona es requerida"),
+  question_id: z.number(),
+});
+
+export const existingQuestionAnswerSchema = z.object({
+  ...questionAnswerSchema.shape,
+  id: z.number().optional(),
 });

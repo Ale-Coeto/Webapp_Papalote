@@ -1,20 +1,24 @@
 import { api, HydrateClient } from "~/trpc/server";
 import { MainTitle } from "~/app/_components/MainTitle";
-import { AddZoneCard } from "~/app/_components/card/AddZoneCard";
-import { ZoneCard } from "~/app/_components/card/ZoneCard";
+import { QuestionCard } from "~/app/_components/card/QuestionCard";
+import { AddQuestionCard } from "~/app/_components/card/AddQuestionCard";
 
 export default async function Home() {
-  const zones = await api.zone.getIds();
+  const questions = await api.question.getIds();
 
   return (
     <HydrateClient>
       <main className="min-h-screen bg-fondo px-24 pt-16">
-        <MainTitle className="mb-6" text="Zonas" />
+        <MainTitle className="mb-6" text="Cuestionario" />
         <div className="flex w-[90%] flex-col gap-y-4">
-          {zones.map((zone) => (
-            <ZoneCard key={zone.id} zoneId={zone.id} />
+          {questions.map((question, i) => (
+            <QuestionCard
+              key={question.id}
+              questionId={question.id}
+              questionNumber={i + 1}
+            />
           ))}
-          <AddZoneCard />
+          <AddQuestionCard />
         </div>
       </main>
     </HydrateClient>

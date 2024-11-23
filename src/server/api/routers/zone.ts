@@ -19,10 +19,27 @@ export const zoneRouter = createTRPCRouter({
       },
     });
   }),
+  getNameById: protectedProcedure
+    .input(z.object({ id: z.number().min(1) }))
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.zone.findUnique({
+        where: { id: input.id },
+        select: {
+          name: true,
+        },
+      });
+    }),
 
   getIds: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.zone.findMany({
       select: { id: true },
+      orderBy: { name: "asc" },
+    });
+  }),
+
+  getOptions: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.zone.findMany({
+      select: { id: true, name: true },
       orderBy: { name: "asc" },
     });
   }),
