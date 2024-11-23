@@ -156,13 +156,15 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                 </div>
                 <div className="flex flex-col md:flex-row gap-6 pt-4 h-max">
 
-                    <div ref={divRef} className="w-1/2 border bg-gray-200 relative">
+                    <div className="w-1/2 border h-auto bg-gray-200 relative">
+                        <div ref={divRef}>
+                            <img
 
-                        <img
-                            src={variant == tag1 ? "/Mapa_A.png" : "/Mapa_B.png"}
-                            alt="Map or Background"
-                            className="w-full h-auto object-contain"
-                        />
+                                src={variant == tag1 ? "/Mapa_A.png" : "/Mapa_B.png"}
+                                alt="Map or Background"
+                                className="w-full h-auto object-contain"
+                            />
+                        </div>
 
                         <div className="absolute top-0 left-0">
 
@@ -206,8 +208,8 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                                                 backgroundColor: pin.color,
                                             }}
                                                 className="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg">
-                                              {iconDictionary[pin.icon]?.icon?.({})}
- 
+                                                {iconDictionary[pin.icon]?.icon?.({})}
+
                                             </div>
 
                                             <div className="flex flex-col">
