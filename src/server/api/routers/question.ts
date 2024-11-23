@@ -5,6 +5,7 @@ import {
   existingQuestionSchema,
   existingQuestionAnswerSchema,
 } from "~/lib/schemas";
+import { TRPCError } from "@trpc/server";
 
 export const questionRouter = createTRPCRouter({
   getIds: protectedProcedure.query(async ({ ctx }) => {
@@ -48,23 +49,38 @@ export const questionRouter = createTRPCRouter({
   createOrModifyAnswer: protectedProcedure
     .input(existingQuestionAnswerSchema)
     .mutation(async ({ input, ctx }) => {
-      if (input.id) {
-        return ctx.db.questionAnswer.update({
-          where: { id: input.id },
+      try {
+        if (input.id) {
+          return ctx.db.questionAnswer.update({
+            where: { id: input.id },
+            data: {
+              answer: input.answer,
+            },
+          });
+        }
+
+        return await ctx.db.questionAnswer.create({
           data: {
             answer: input.answer,
             zone_id: input.zone_id,
+            question_id: input.question_id,
           },
         });
+      } catch (error) {
+        if (error instanceof Error) {
+          if (
+            error.message.includes(
+              "Unique constraint failed on the constraint: `QuestionAnswer_question_id_zone_id_key`",
+            )
+          ) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Ya existe una respuesta con la misma zona y pregunta.",
+            });
+          }
+        }
+        throw error;
       }
-
-      return await ctx.db.questionAnswer.create({
-        data: {
-          answer: input.answer,
-          zone_id: input.zone_id,
-          question_id: input.question_id,
-        },
-      });
     }),
 
   getAnswerIds: protectedProcedure

@@ -63,6 +63,10 @@ export const AddAnswerForm = ({
       onCompleted();
     },
     onError: (error) => {
+      toast({
+        title: `Error al ${action.toLowerCase()}.`,
+        description: `${error.message}`,
+      });
       console.error(error);
     },
   });
