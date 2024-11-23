@@ -30,7 +30,7 @@ const EditPinsModal = ({ onClose, pin }: EditPinsModalProps) => {
         onError: (error) => {
             toast({
                 title: `Error al actualizar el pin`,
-                description: `${error}`,
+                description: error.message || JSON.stringify(error),
             })
         },
     });
@@ -44,7 +44,7 @@ const EditPinsModal = ({ onClose, pin }: EditPinsModalProps) => {
         onError: (error) => {
             toast({
                 title: `Error al eliminar el pin`,
-                description: `${error}`,
+                description: error.message || JSON.stringify(error),
             })
         },
     });

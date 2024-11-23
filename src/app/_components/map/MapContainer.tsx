@@ -76,7 +76,7 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
         onError: (error) => {
             toast({
                 title: `Error al actualizar los pines`,
-                description: `${error}`,
+                description: error.message || JSON.stringify(error),
             })
         },
     });
@@ -84,10 +84,11 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
     const tag1 = "Piso 1";
     const tag2 = "Piso 2";
 
-    const tags: { [key: string]: number; } = {
+    const tags: Record<string, number> = {
         "Piso 1": 1,
         "Piso 2": 2,
     };
+     
     const [variant, setSelected] = useState(tag1);
 
     const toggleVariant = useCallback(() => {

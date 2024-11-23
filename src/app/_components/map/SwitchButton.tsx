@@ -1,3 +1,4 @@
+import { IconType } from 'react-icons/lib';
 import { TbCircleNumber1Filled, TbCircleNumber2Filled } from 'react-icons/tb'
 
 
@@ -10,7 +11,7 @@ interface switchButtonProps {
 
 interface selectedButtonProps {
     label: string;
-    icon: any;
+    icon: IconType;
     selected: boolean;
     onClick: () => void;
 }
