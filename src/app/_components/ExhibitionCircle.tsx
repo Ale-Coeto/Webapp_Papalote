@@ -15,15 +15,15 @@ export const ExhibitionCircle = ({ insigniaId }: { insigniaId: number }) => {
 
   return (
     <>
-      <Circle onClick={() => setOpenEdit(true)}>
-        {exhibition ? (
-          <div
-            className="my-4 flex flex-row items-center justify-center gap-x-4 text-gris"
-            style={{ backgroundImage: `url('/Papalote_entrada.png')` }}
-          ></div>
-        ) : (
-          <BeatLoader color="#2DEA6D" />
-        )}
+      <Circle
+        onClick={() => setOpenEdit(true)}
+        style={{
+          backgroundImage: exhibition ? `url(${exhibition.image})` : undefined,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {!exhibition && <BeatLoader color="#2DEA6D" />}
       </Circle>
       {exhibition && openEdit && (
         <Modal

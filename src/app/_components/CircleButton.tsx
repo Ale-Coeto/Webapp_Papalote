@@ -9,7 +9,7 @@ export const Circle = ({ children, className, ...props }: CircleProps) => {
   return (
     <div
       className={cn(
-        "h-10 w-10 rounded-full border-4 border-gris bg-gray-300",
+        "flex h-20 w-20 items-center justify-center rounded-full border-4 border-gris bg-gray-300",
         className,
       )}
       {...props}

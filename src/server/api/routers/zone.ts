@@ -6,6 +6,8 @@ import {
   protectedModificationProcedure,
 } from "~/server/api/trpc";
 import { existingZoneSchema } from "~/lib/schemas";
+import { getImageLink } from "~/server/supabase";
+import { v4 as uuidv4 } from "uuid";
 
 export const zoneRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -91,6 +93,13 @@ export const zoneRouter = createTRPCRouter({
   createOrModify: protectedModificationProcedure
     .input(existingZoneSchema)
     .mutation(async ({ input, ctx }) => {
+      const newUuid = uuidv4();
+      const imageLink = await getImageLink(
+        input.zoneLogo,
+        "zonas",
+        input.id ? String(input.id) : newUuid,
+      );
+
       if (input.id) {
         return ctx.db.zone.update({
           where: { id: input.id },
@@ -98,7 +107,7 @@ export const zoneRouter = createTRPCRouter({
             name: input.zoneName,
             description: input.zoneDescription,
             color: input.zoneColor,
-            logo: input.zoneLogo,
+            logo: imageLink,
           },
         });
       }
@@ -108,7 +117,7 @@ export const zoneRouter = createTRPCRouter({
           name: input.zoneName,
           description: input.zoneDescription,
           color: input.zoneColor,
-          logo: input.zoneLogo,
+          logo: imageLink,
         },
       });
     }),
