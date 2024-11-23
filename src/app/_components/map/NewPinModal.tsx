@@ -25,7 +25,7 @@ const NewPinModal = ({ onClose }: { onClose: () => void }) => {
         onError: (error) => {
             toast({
                 title: `Error al crear el pin`,
-                description: `${error}`,
+                description: error.message || JSON.stringify(error),
             })
         },
     });
