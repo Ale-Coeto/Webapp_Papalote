@@ -12,7 +12,7 @@ export const InsigniasCard = ({
   zoneId,
   className,
 }: {
-  zoneId: string;
+  zoneId: number;
   className?: string;
 }) => {
   const { data: insignias, isLoading } = api.insignia.getIdsByZone.useQuery({
@@ -22,7 +22,7 @@ export const InsigniasCard = ({
   return (
     <Card className={cn("flex flex-col flex-wrap gap-x-5 gap-y-5", className)}>
       <Title text="Insignias" />
-      <div className="flex flex-row items-center gap-x-10 gap-y-10">
+      <div className="flex flex-row flex-wrap items-center gap-x-10 gap-y-10">
         {isLoading ? (
           <div className="flex w-full flex-col items-center">
             <div>

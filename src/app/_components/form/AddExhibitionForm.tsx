@@ -16,7 +16,7 @@ export const AddExhbitionForm = ({
 }: {
   onCompleted: () => void;
   defaultValues?: FormData;
-  zone_id: string;
+  zone_id: number | undefined;
 }) => {
   const {
     register,
@@ -126,7 +126,7 @@ export const AddExhbitionForm = ({
               className="w-full rounded-lg bg-red-500 p-3 text-white"
               onClick={() => {
                 deleteExhibition.mutate({
-                  id: defaultValues.exhibitionId ?? "",
+                  id: defaultValues.exhibitionId ?? -1,
                 });
               }}
             >

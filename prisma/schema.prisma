@@ -1,148 +1,153 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Post {
-    id          Int      @id @default(autoincrement())
-    name        String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    createdById String
-    createdBy   User     @relation(fields: [createdById], references: [id])
+  id          Int      @id @default(autoincrement())
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
 
-    @@index([name])
-    @@index([createdById], map: "Post_createdById_fkey")
+  @@index([name])
+  @@index([createdById], map: "Post_createdById_fkey")
 }
 
 model Account {
-    id                       String  @id @default(cuid())
-    userId                   String
-    type                     String
-    provider                 String
-    providerAccountId        String
-    refresh_token            String? @db.Text
-    access_token             String? @db.Text
-    expires_at               Int?
-    token_type               String?
-    scope                    String?
-    id_token                 String? @db.Text
-    session_state            String?
-    refresh_token_expires_in Int?
-    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
-    @@index([userId], map: "Account_userId_fkey")
+  @@unique([provider, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@index([userId], map: "Session_userId_fkey")
+  @@index([userId], map: "Session_userId_fkey")
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    posts         Post[]
-    sessions      Session[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  posts         Post[]
+  sessions      Session[]
 }
 
 model VerificationToken {
-    identifier String   @id
-    token      String   @unique
-    expires    DateTime
+  identifier String   @id
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
 }
 
 model Zone {
-    id              String           @id @default(cuid())
-    name            String
-    logo            String?
-    color           String
-    createdAt       DateTime         @default(now())
-    updatedAt       DateTime         @updatedAt
-    description     String
-    exhibitions    Exhibition[]
-    insignias       Insignia[]
-    questionAnswers QuestionAnswer[]
+  id              Int              @id @default(autoincrement())
+  name            String
+  logo            String?
+  color           String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  description     String
+  exhibitions     Exhibition[]
+  insignias       Insignia[]
+  questionAnswers QuestionAnswer[]
 }
 
 model Insignia {
-    id               String        @id @default(cuid())
-    zone_id          String
-    name             String
-    description      String
-    nfc_code         String
-    logo             String
-    special_event_id String?
-    special_event    SpecialEvent? @relation(fields: [special_event_id], references: [id])
-    zone             Zone         @relation(fields: [zone_id], references: [id])
+  id               Int           @id @default(autoincrement())
+  zone_id          Int
+  description      String
+  nfc_code         String
+  special_event_id Int?
+  name             String
+  logo             String
+  special_event    SpecialEvent? @relation(fields: [special_event_id], references: [id])
+  zone             Zone          @relation(fields: [zone_id], references: [id])
 
-    @@index([zone_id], map: "Insignia_zone_id_fkey")
-    @@index([special_event_id], map: "Insignia_special_event_id_fkey")
+  @@index([zone_id], map: "Insignia_zone_id_fkey")
+  @@index([special_event_id], map: "Insignia_special_event_id_fkey")
 }
 
 model Question {
-    id              String           @id @default(cuid())
-    question        String
-    questionAnswers QuestionAnswer[]
+  id              Int              @id @default(autoincrement())
+  question        String
+  questionAnswers QuestionAnswer[]
 }
 
 model QuestionAnswer {
-    id          String   @id @default(cuid())
-    question_id String
-    zone_id     String
-    question    Question @relation(fields: [question_id], references: [id])
-    zone        Zone     @relation(fields: [zone_id], references: [id])
+  id          Int      @id @default(autoincrement())
+  question_id Int
+  zone_id     Int
+  question    Question @relation(fields: [question_id], references: [id])
+  zone        Zone     @relation(fields: [zone_id], references: [id])
 
-    @@index([question_id], map: "QuestionAnswer_question_id_fkey")
-    @@index([zone_id], map: "QuestionAnswer_zone_id_fkey")
+  @@index([question_id], map: "QuestionAnswer_question_id_fkey")
+  @@index([zone_id], map: "QuestionAnswer_zone_id_fkey")
 }
 
 model Exhibition {
-    id          String  @id @default(cuid())
-    zone_id     String
-    name        String
-    is_open     Boolean
-    image       String?
-    description String
-    Zone        Zone    @relation(fields: [zone_id], references: [id])
+  id          Int     @id @default(autoincrement())
+  zone_id     Int
+  name        String
+  is_open     Boolean
+  image       String?
+  description String
+  Zone        Zone    @relation(fields: [zone_id], references: [id])
 
-    @@index([zone_id], map: "Exhibition_zone_id_fkey")
+  @@index([zone_id], map: "Exhibition_zone_id_fkey")
 }
 
 model ExhibitionVisit {
-    id            String   @id @default(cuid())
-    exhibition_id String
-    date          DateTime @default(now())
-    rating        Int?
+  id            Int      @id @default(autoincrement())
+  exhibition_id String
+  date          DateTime @default(now())
+  rating        Int?
 }
 
-model Museum_Entrance {
-    id   String   @id @default(cuid())
-    date DateTime @default(now())
+model MuseumEntrance {
+  id   Int      @id @default(autoincrement())
+  date DateTime @default(now())
+}
+
+model LastFetch {
+  id   Int      @id @default(autoincrement())
+  date DateTime @default(now())
 }
 
 model SpecialEvent {
-    id          String     @id @default(cuid())
-    name        String
-    start_date  DateTime
-    end_date    DateTime
-    description String
-    image       String
-    insignias   Insignia[]
+  id          Int        @id @default(autoincrement())
+  name        String
+  start_date  DateTime
+  end_date    DateTime
+  description String
+  image       String
+  insignias   Insignia[]
 }

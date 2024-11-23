@@ -3,22 +3,38 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
+  protectedModificationProcedure,
 } from "~/server/api/trpc";
 import { existingZoneSchema } from "~/lib/schemas";
 
 export const zoneRouter = createTRPCRouter({
+  get: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.zone.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        color: true,
+        logo: true,
+      },
+    });
+  }),
+
   getIds: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db.zone.findMany({ select: { id: true }, orderBy: { name: "asc" } });
+    return await ctx.db.zone.findMany({
+      select: { id: true },
+      orderBy: { name: "asc" },
+    });
   }),
 
   getById: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.object({ id: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.zone.findUnique({ where: { id: input.id } });
     }),
 
   getZoneOverviewById: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.object({ id: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.zone.findUnique({
         where: { id: input.id },
@@ -40,8 +56,8 @@ export const zoneRouter = createTRPCRouter({
         },
       });
     }),
-    getZoneById: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+  getZoneById: protectedProcedure
+    .input(z.object({ id: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
       return await ctx.db.zone.findUnique({
         where: { id: input.id },
@@ -55,7 +71,7 @@ export const zoneRouter = createTRPCRouter({
         },
       });
     }),
-  createOrModify: protectedProcedure
+  createOrModify: protectedModificationProcedure
     .input(existingZoneSchema)
     .mutation(async ({ input, ctx }) => {
       if (input.id) {
@@ -80,8 +96,8 @@ export const zoneRouter = createTRPCRouter({
       });
     }),
 
-  delete: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+  delete: protectedModificationProcedure
+    .input(z.object({ id: z.number().min(1) }))
     .mutation(async ({ input, ctx }) => {
       return ctx.db.zone.delete({ where: { id: input.id } });
     }),

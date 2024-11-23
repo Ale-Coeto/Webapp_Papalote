@@ -5,7 +5,7 @@ import Modal from "~/app/_components/Modal";
 import { AddExhbitionForm } from "~/app/_components/form/AddExhibitionForm";
 import AddButton from "./form/AddButton";
 
-export const AddExhibitionCircle = ({ zoneId }: { zoneId: string }) => {
+export const AddExhibitionCircle = ({ zoneId }: { zoneId: number }) => {
   const [openCreate, setOpenCreate] = useState(false);
 
   return (
