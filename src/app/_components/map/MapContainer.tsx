@@ -17,7 +17,7 @@ import Card from "../card/Card";
 import { FaEdit } from "react-icons/fa";
 import Modal from "../Modal";
 import EditPinsModal from "./EditPinsModal";
-
+import { iconDictionary } from "~/utils/icons";
 
 const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) => {
     const divRef = useRef<HTMLDivElement>(null); // Reference for the div
@@ -146,13 +146,20 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
         <>
             <div>
                 <SwitchButton variant={variant} onClick={toggleVariant} tag1={tag1} tag2={tag2} />
-                <p>Width: {dimensions.width}px</p>
-                <p>Height: {dimensions.height}px</p>
+                <div className="py-4 text-base">
+                    Arrastra los pines para cambiar su posición y guarda las actualizaciones con el botón guardar posiciones.
+                    <br />
+                    <div className="flex gap-2 items-center">
+                        También puedes editarlos desde la lista haciendo click en el botón de editar.
+                        <FaEdit className="text-lg text-azul hover:text-azul-200" />
+                    </div>
+                </div>
                 <div className="flex flex-col md:flex-row gap-6 pt-4 h-max">
+
                     <div ref={divRef} className="w-1/2 border bg-gray-200 relative">
 
                         <img
-                            src="/Mapa_A.png"
+                            src={variant == tag1 ? "/Mapa_A.png" : "/Mapa_B.png"}
                             alt="Map or Background"
                             className="w-full h-auto object-contain"
                         />
@@ -161,11 +168,13 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
 
                             <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                                 {pins.map((pin) => (
-                                    <PinIcon
-                                        pin={pin}
-                                        isDragging={activePinId === pin.id}
-                                        imageRect={dimensions}
-                                    />
+                                    pin.piso === tags[variant] && (
+                                        <PinIcon
+                                            pin={pin}
+                                            isDragging={activePinId === pin.id}
+                                            imageRect={dimensions}
+                                        />
+                                    )
                                 ))}
 
                                 <DragOverlay>
@@ -176,7 +185,7 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                                             }}
                                             className="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg"
                                         >
-                                            {activePin.id}
+                                            {/* {activePin} */}
                                         </div>
                                     ) : null}
                                 </DragOverlay>
@@ -190,14 +199,26 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
 
                                 <Card key={key}>
                                     <div className="flex flex-row justify-between">
-                                        <div className="flex flex-col">
-                                            <h1 className="font-semibold text-texto"> {pin.name} </h1>
-                                            <p className="text-texto"> Piso: {pin.piso} </p>
+                                        <div className="flex flex-row items-center gap-4">
+
+                                            <div style={{
+                                                backgroundColor: pin.color,
+                                            }}
+                                                className="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg">
+                                                {iconDictionary[pin.icon]?.icon && (
+                                                    iconDictionary[pin.icon]?.icon({})
+                                                )}
+                                            </div>
+
+                                            <div className="flex flex-col">
+                                                <h1 className="font-semibold text-texto"> {pin.name} </h1>
+                                                <p className="text-texto"> Piso: {pin.piso} </p>
+                                            </div>
                                         </div>
                                         <div className="flex flex-row gap-6">
                                             <div className="items-left flex flex-col justify-center text-sm text-gris">
-                                                <div>x: {pin.x}</div>
-                                                <div>y: {pin.y}</div>
+                                                <div>x: {pin.x.toFixed()}</div>
+                                                <div>y: {pin.y.toFixed()}</div>
                                             </div>
 
                                             <button onClick={() => handleEdit(pin)}>
@@ -210,6 +231,9 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                         ))}
                     </div>
                 </div>
+
+
+                <p className="text-sm text-slate-500">W: {dimensions.width.toFixed()}px, H: {dimensions.height.toFixed()}px</p>
 
 
                 <div className="mt-4 flex">

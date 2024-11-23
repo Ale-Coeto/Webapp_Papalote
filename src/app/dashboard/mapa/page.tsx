@@ -13,13 +13,13 @@ const MapPage = async () => {
 
     return (
         <div className="h-full bg-fondo p-10" >
-            <div className="mb-10 flex flex-row items-center justify-between">
+            <div className="mb-5 flex flex-row items-center justify-between">
                 <Title text="Eventos Especiales" />
 
                 <AddModifyPin zones={zonas} />
             </div>
-            <MapContainer pinList={pins} zones={zonas}/>
-            
+            <MapContainer pinList={pins} zones={zonas} />
+
         </div>
     );
 }
