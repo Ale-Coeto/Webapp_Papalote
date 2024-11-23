@@ -41,7 +41,10 @@ const PinIcon: React.FC<PinProps> = ({ pin, isDragging }) => {
                     style={{ backgroundColor: pin.color }}
                     className="rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg border-2 border-white z-40 relative"
                 >
-                    {IconComponent && <IconComponent />}
+                    <div>
+                        {IconComponent && <IconComponent />}
+                    </div>
+
                 </div>
 
                 <div
