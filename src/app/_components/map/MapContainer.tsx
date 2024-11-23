@@ -31,7 +31,7 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
     };
 
     useEffect(() => {
-        const timeout = setTimeout(updateDimensions, 1);
+        const timeout = setTimeout(updateDimensions, 1000);
         updateDimensions();
         window.addEventListener("resize", updateDimensions);
 
@@ -167,7 +167,7 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                 </div>
                 <div className="flex flex-col md:flex-row gap-6 pt-4 h-max">
 
-                    <div className="w-1/2 border h-1/2 bg-gray-200 relative">
+                    <div className="w-1/2 border h-auto bg-gray-200 relative">
                         <div ref={divRef}>
                             <img
 
