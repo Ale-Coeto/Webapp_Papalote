@@ -30,7 +30,7 @@ const visitSchema = z.object({
 });
 
 const registerVisit = async (req: NextRequest) => {
-  const visitData = visitSchema.safeParse(req.json()).data;
+  const visitData = visitSchema.safeParse(await req.json()).data;
 
   try {
     if (visitData?.isEntrance) {
