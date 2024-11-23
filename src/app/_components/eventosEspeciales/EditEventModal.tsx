@@ -18,7 +18,6 @@ export default function EditEventModal({
     register,
     setValue,
     watch,
-    formState: { errors },
   } = useForm<SpecialEvent>({
     defaultValues: {},
   });

@@ -5,11 +5,11 @@ import Title from "~/app/_components/Title";
 import Card from "~/app/_components/card/Card";
 import { FaEdit } from "react-icons/fa";
 import Modal from "~/app/_components/Modal";
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import NewEventModal from "~/app/_components/eventosEspeciales/NewEventModal";
 import EditEventModal from "~/app/_components/eventosEspeciales/EditEventModal";
 import { api } from "~/trpc/react";
-import { SpecialEvent } from "@prisma/client";
+import type { SpecialEvent } from "@prisma/client";
 
 export default function EventosEspeciales() {
   const [openNew, setOpenNew] = useState(false);

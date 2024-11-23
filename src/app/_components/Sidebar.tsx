@@ -9,6 +9,7 @@ import {
   faChartSimple,
   faQuestion,
   faLocation,
+  faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { Session } from "next-auth";
@@ -29,7 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
   toggleCollapse,
 }) => {
-  const { data: zoneNames, isLoading } = api.zone.getNames.useQuery();
+  const { data: zoneNames } = api.zone.getNames.useQuery();
 
   return (
     <div
@@ -75,10 +76,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         <SideBarElement
           isCollapsed={isCollapsed}
+          icon={faMapMarkerAlt}
+          label="Mapa"
+          link="/dashboard/mapa"
+        />
+
+        <SideBarElement
+          isCollapsed={isCollapsed}
           icon={faLocation}
           label="Zonas"
           link="/dashboard/zones"
         />
+
         {zoneNames?.map((zone) => (
           <SideBarElement
             key={zone.id}

@@ -2,11 +2,11 @@
 
 import { IoMdCloseCircleOutline } from "react-icons/io";
 
-export default function Modal({ children, title, onClose, isOpen, customButtonAction, customButtonLabel }: { children: React.ReactNode, title: string, onClose: () => void, isOpen: boolean, customButtonAction?: () => void, customButtonLabel?: string }) {
+export default function Modal({ children, title, onClose, isOpen }: { children: React.ReactNode, title: string, onClose: () => void, isOpen: boolean, customButtonAction?: () => void, customButtonLabel?: string }) {
     return (
         // add a button with x icon to close the modal
         <div className={`fixed z-10 inset-0 overflow-y-auto ${isOpen ? "" : "hidden"}`}>
-            <div className="fixed z-10 inset-0 overflow-y-auto">
+            <div className="fixed z-50 inset-0 overflow-y-auto">
                 <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     <div className="fixed inset-0 transition-opacity" aria-hidden="true">
                         <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -39,10 +39,3 @@ export default function Modal({ children, title, onClose, isOpen, customButtonAc
         </div>
     )
 }
-
-{/* <div className="bg-white px-4 py-6 sm:px-6 sm:flex sm:flex-row-reverse flex gap-4">
-                            {customButtonAction && customButtonLabel && 
-                            <Button label={customButtonLabel} onClick={customButtonAction} />
-                            }
-                            <Button label="Cerrar" onClick={onClose} secondary />
-                        </div> */}
