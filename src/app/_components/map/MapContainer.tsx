@@ -8,7 +8,7 @@ import {
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import SwitchButton from "./SwitchButton";
-import { Pin } from "@prisma/client";
+import type { Pin, Zone } from "@prisma/client";
 import PinIcon from "./Pin";
 import Button from "../Button";
 import { api } from "~/trpc/react";
@@ -19,7 +19,7 @@ import Modal from "../Modal";
 import EditPinsModal from "./EditPinsModal";
 
 
-const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
+const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) => {
     const divRef = useRef<HTMLDivElement>(null); // Reference for the div
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -59,7 +59,7 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
     const [selectedPin, setSelectedPin] = useState<Pin>();
 
     const updatePins = api.pin.updatePins.useMutation({
-        onSuccess: async (data) => {
+        onSuccess: async () => {
             toast({
                 title: `¡Pines actualizados!`,
                 description: `Los pines han sido actualizados correctamente`,
@@ -162,11 +162,7 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
                             <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                                 {pins.map((pin) => (
                                     <PinIcon
-                                        key={pin.id}
-                                        id={pin.id}
-                                        x={pin.x}
-                                        y={pin.y}
-                                        color={pin.color}
+                                        pin={pin}
                                         isDragging={activePinId === pin.id}
                                         imageRect={dimensions}
                                     />
@@ -231,7 +227,7 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
                     isOpen={openEdit}
                     customButtonAction={() => setOpenEdit(false)}
                 >
-                    <EditPinsModal onClose={() => setOpenEdit(false)} pin={selectedPin} />
+                    <EditPinsModal onClose={() => setOpenEdit(false)} pin={selectedPin} zones={zones} />
                 </Modal>
             )}
         </>
