@@ -31,14 +31,25 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
     };
 
     useEffect(() => {
+        const timeout = setTimeout(updateDimensions, 1);
         updateDimensions();
         window.addEventListener("resize", updateDimensions);
 
         return () => {
+            clearTimeout(timeout);
             window.removeEventListener("resize", updateDimensions);
         };
     }, []);
 
+    // useEffect(() => {
+    //     const timeout = setTimeout(updateDimensions, 0); // Ensure updateDimensions runs after render
+    //     window.addEventListener("resize", updateDimensions);
+
+    //     return () => {
+    //         clearTimeout(timeout);
+    //         window.removeEventListener("resize", updateDimensions);
+    //     };
+    // }, []);
     const [pins, setPins] = useState<Pin[]>([]);
 
     useEffect(() => {
