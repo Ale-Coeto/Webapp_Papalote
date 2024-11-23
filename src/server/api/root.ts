@@ -6,6 +6,7 @@ import { specialEventRouter } from "./routers/specialEvent";
 import { visitRouter } from "~/server/api/routers/visit";
 import { lastUpdateRouter } from "~/server/api/routers/lastUpdate";
 import { museumEntranceRouter } from "./routers/museumEntrance";
+import { pinRouter } from "~/server/api/routers/pin";
 
 /**
  * This is the primary router for your server.
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   visit: visitRouter,
   lastUpdate: lastUpdateRouter,
   museumEntrance: museumEntranceRouter,
+  pin: pinRouter,
 });
 
 // export type definition of API

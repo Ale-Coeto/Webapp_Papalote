@@ -80,6 +80,7 @@ model Zone {
   insignias       Insignia[]
   Pin             Pin[]
   questionAnswers QuestionAnswer[]
+  pins            Pin[]
 }
 
 model Insignia {
@@ -166,3 +167,4 @@ model Pin {
 
   @@index([zone_id], map: "Pin_zone_id_fkey")
 }
+
