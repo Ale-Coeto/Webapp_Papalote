@@ -5,6 +5,8 @@ import {
   protectedProcedure,
   protectedModificationProcedure,
 } from "~/server/api/trpc";
+import { v4 as uuidv4 } from "uuid";
+import { getImageLink } from "~/server/supabase";
 
 export const specialEventRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -38,13 +40,19 @@ export const specialEventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const newUuid = uuidv4();
+      const imageLink = await getImageLink(
+        input.image,
+        "special_event",
+        newUuid,
+      );
       return ctx.db.specialEvent.create({
         data: {
           name: input.name,
           description: input.description,
           start_date: input.startDate,
           end_date: input.endDate,
-          image: input.image,
+          image: imageLink,
         },
       });
     }),
@@ -61,6 +69,12 @@ export const specialEventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const newUuid = uuidv4();
+      const imageLink = await getImageLink(
+        input.image,
+        "special_event",
+        input.id ? String(input.id) : newUuid,
+      );
       return ctx.db.specialEvent.update({
         where: {
           id: input.id,
@@ -70,7 +84,7 @@ export const specialEventRouter = createTRPCRouter({
           description: input.description,
           start_date: input.startDate,
           end_date: input.endDate,
-          image: input.image,
+          image: imageLink,
         },
       });
     }),

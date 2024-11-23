@@ -21,6 +21,8 @@ export const AddExhbitionForm = ({
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(existingExhibitionSchema),
@@ -108,10 +110,37 @@ export const AddExhbitionForm = ({
         </div>
 
         <div>
-          <label htmlFor="exhibitionImage">Imagen de la exhibición</label>
+          <label htmlFor="exhibitionImage">
+            Imagen de la exhibición (subir imagen o escribir link)
+          </label>
           <TextInput id="exhibitionImage" {...register("exhibitionImage")} />
           {errors.exhibitionImage?.message && (
             <ErrorMessage error={errors.exhibitionImage.message} />
+          )}
+          <input
+            className="my-3"
+            type="file"
+            name="file"
+            accept=".jpg, .jpeg, .png"
+            onChange={(e) => {
+              if (!e.target.files) return;
+              const file = e.target.files[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onloadend = async () => {
+                if (typeof reader.result === "string") {
+                  setValue("exhibitionImage", reader.result);
+                }
+              };
+            }}
+          />
+          {watch("exhibitionImage") && (
+            <img
+              src={watch("exhibitionImage")}
+              alt="Logo de la exhibición"
+              className="mx-auto w-64 pt-3"
+            />
           )}
         </div>
         <div className="flex flex-row gap-x-5">

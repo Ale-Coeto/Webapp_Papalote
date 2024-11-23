@@ -27,9 +27,26 @@ export const uploadFile = async ({
   const base64 = await fetch(file);
   const blob = await base64.blob();
 
+  await ensureBucketExists(bucket);
+
   return await supabase.storage.from(bucket).upload(path, blob, {
     upsert: true,
   });
+};
+
+export const ensureBucketExists = async (bucket: string) => {
+  const { error } = await supabase.storage.getBucket(bucket);
+  if (error) {
+    const { error: createError } = await supabase.storage.createBucket(bucket, {
+      public: true,
+    });
+    if (createError) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: createError.message,
+      });
+    }
+  }
 };
 
 const getFileUrl = (base: string, path: string) => {
