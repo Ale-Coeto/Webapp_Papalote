@@ -5,6 +5,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { specialEventRouter } from "./routers/specialEvent";
 import { visitRouter } from "~/server/api/routers/visit";
 import { lastUpdateRouter } from "~/server/api/routers/lastUpdate";
+import { museumEntranceRouter } from "./routers/museumEntrance";
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   exhibition: exhibitionRouter,
   visit: visitRouter,
   lastUpdate: lastUpdateRouter,
+  museumEntrance: museumEntranceRouter,
 });
 
 // export type definition of API
