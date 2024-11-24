@@ -10,7 +10,7 @@ const MapPage = async () => {
         ...zone,
         createdAt: new Date(),
         updatedAt: new Date(),
-    })); ``
+    })); 
 
     return (
         <div className="h-full bg-fondo p-10" >
