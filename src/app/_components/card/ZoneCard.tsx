@@ -21,6 +21,10 @@ export const ZoneCard = ({ zoneId }: { zoneId: number }) => {
       });
     },
     onError: (error) => {
+      toast({
+        title: "Ocurrió un error.",
+        description: `${error.message}`,
+      });
       console.error(error);
     },
   });

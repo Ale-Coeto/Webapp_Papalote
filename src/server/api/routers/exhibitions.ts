@@ -49,12 +49,13 @@ export const exhibitionRouter = createTRPCRouter({
     .input(existingExhibitionSchema)
     .mutation(async ({ input, ctx }) => {
       const newUuid = uuidv4();
-
       const imageLink = await getImageLink(
         input.exhibitionImage,
         "exhibition",
-        input.exhibitionImage ? String(input.exhibitionImage) : newUuid,
+        input.exhibitionId ? String(input.exhibitionId) : newUuid,
       );
+
+      console.log("imageLink", imageLink);
 
       if (input.exhibitionId) {
         return ctx.db.exhibition.update({

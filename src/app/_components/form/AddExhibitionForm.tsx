@@ -52,6 +52,10 @@ export const AddExhbitionForm = ({
       onCompleted();
     },
     onError: (error) => {
+      toast({
+        title: "Ocurrió un error.",
+        description: `${error.message}`,
+      });
       console.error(error);
     },
   });
@@ -60,10 +64,14 @@ export const AddExhbitionForm = ({
     onSuccess: async (data) => {
       toast({
         title: "Exhibición Borrada!",
-        description: `Nombre: ${data.name}}`,
+        description: `Nombre: ${data.name}`,
       });
     },
     onError: (error) => {
+      toast({
+        title: "Ocurrió un error.",
+        description: `${error.message}`,
+      });
       console.error(error);
     },
   });

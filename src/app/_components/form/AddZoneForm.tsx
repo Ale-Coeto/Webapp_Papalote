@@ -49,6 +49,10 @@ export const AddZoneForm = ({
       onCompleted();
     },
     onError: (error) => {
+      toast({
+        title: "Ocurrió un error.",
+        description: `${error.message}`,
+      });
       console.error(error);
     },
   });
