@@ -1,14 +1,14 @@
 import { cn } from "~/lib/utils";
 
-interface MainTitleProps extends React.HTMLAttributes<HTMLDivElement> {
+export const MainTitle = ({
+  text,
+  className,
+}: {
   text: string;
-}
-export const MainTitle = ({ text, className, ...props }: MainTitleProps) => {
+  className?: string;
+}) => {
   return (
-    <div
-      className={cn("text-4xl font-semibold text-gris", className)}
-      {...props}
-    >
+    <div className={cn("text-4xl font-semibold text-gris", className)}>
       <h1>{text}</h1>
     </div>
   );

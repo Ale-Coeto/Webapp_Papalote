@@ -4,9 +4,8 @@ import { useState } from "react";
 import AddButton from "~/app/_components/Button";
 import Modal from "../Modal";
 import NewPinModal from "./NewPinModal";
-import { Zone } from "@prisma/client";
 
-const AddModifyPin = ({zones} : {zones?:Zone[]}) => {
+const AddModifyPin = () => {
     const [openNew, setOpenNew] = useState(false);
 
     return (
@@ -36,7 +35,7 @@ const AddModifyPin = ({zones} : {zones?:Zone[]}) => {
                 isOpen={openNew}
                 customButtonAction={() => setOpenNew(false)}
             >
-                <NewPinModal onClose={() => setOpenNew(false)} zones={zones} />
+                <NewPinModal onClose={() => setOpenNew(false)} />
             </Modal>
 
             

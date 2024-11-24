@@ -1,53 +1,25 @@
-"use client";
-import type { Pin, Zone } from "@prisma/client";
+import { Pin } from "@prisma/client";
 import Button from "../Button";
 import AddButton from "../form/AddButton";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { useToast } from "~/hooks/use-toast";
-import { useEffect, useState } from "react";
-import IconSelector from "./IconSelector";
-import { iconDictionary } from "../../../utils/icons";
+
 interface EditPinsModalProps {
     onClose: () => void;
     pin: Pin;
-    zones?: Zone[];
 }
 
-const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
+const EditPinsModal = ({ onClose, pin }: EditPinsModalProps) => {
     const {
         handleSubmit,
         register,
         setValue,
-        reset,
         formState: { errors },
-    } = useForm<Pin>({ defaultValues: {
-        name: pin.name,
-        color: pin.color,
-        icon: pin.icon,
-        piso: pin.piso,
-    } });
-
-    const [selected, setSelected] = useState(iconDictionary[pin.icon]?.value ?? "Sin seleccionar");
-    
-    useEffect(() => {
-        reset({
-            name: pin.name,
-            color: pin.color,
-            icon: pin.icon,
-            piso: pin.piso,
-        });
-        setSelected(iconDictionary[pin.icon]?.value ?? "Sin seleccionar");
-    }, [pin, reset]);
-
-    const handleIconSelect = (value: string) => {
-        setSelected(value);
-        setValue("icon", value, { shouldValidate: true });
-    };
+    } = useForm<Pin>({ defaultValues: {} });
 
     const { toast } = useToast();
-    console.log("editing", pin)
-
+    
     const editPin = api.pin.updatePin.useMutation({
         onSuccess: async (data) => {
             toast({
@@ -78,12 +50,12 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
     });
 
 
-    const handleDelete = () => {
+      const handleDelete = () => {
         if (window.confirm("¿Estás seguro que deseas eliminar este pin?")) {
-            deletePin.mutate(pin.id);
-            onClose();
+          deletePin.mutate(pin.id);
+          onClose();
         }
-    };
+      };
 
     const onSubmit: SubmitHandler<Pin> = (data) => {
         console.log(data)
@@ -110,7 +82,7 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
                     <label>Nombre del pin</label>
                     <input
                         id="nombre"
-                        // defaultValue={pin.name}
+                        defaultValue={pin.name}
                         type="text"
                         className="w-full rounded-md border-2 px-1"
                         {...register("name")}
@@ -158,8 +130,9 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
 
                 <div className="flex flex-col pb-6">
                     <label>Ícono</label>
-                    <IconSelector selected={selected} setSelected={handleIconSelect} />
-                    {errors.icon && <p className="text-red-500">{errors.icon.message}</p>}
+                    <div className="flex flex-row pt-1">
+                        <AddButton onClick={onClose} />
+                    </div>
                 </div>
 
 

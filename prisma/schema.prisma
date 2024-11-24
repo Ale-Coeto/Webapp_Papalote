@@ -71,7 +71,7 @@ model VerificationToken {
 model Zone {
   id              Int              @id @default(autoincrement())
   name            String
-  logo            String
+  logo            String?
   color           String
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -107,11 +107,9 @@ model QuestionAnswer {
   id          Int      @id @default(autoincrement())
   question_id Int
   zone_id     Int
-  answer      String
   question    Question @relation(fields: [question_id], references: [id])
   zone        Zone     @relation(fields: [zone_id], references: [id])
 
-  @@unique([question_id, zone_id])
   @@index([question_id], map: "QuestionAnswer_question_id_fkey")
   @@index([zone_id], map: "QuestionAnswer_zone_id_fkey")
 }
@@ -156,13 +154,14 @@ model SpecialEvent {
 }
 
 model Pin {
-  id      Int    @id @default(autoincrement())
-  name    String
-  piso    Int
-  color   String
-  icon    String
-  x       Int
-  y       Int
-  zone_id Int?
-  zone    Zone?  @relation(fields: [zone_id], references: [id])
+  id          Int      @id @default(autoincrement())
+  name        String
+  piso        Int
+  color       String
+  icon        String
+  x           Int   
+  y           Int
+  zone_id     Int?
+  zone        Zone?    @relation(fields: [zone_id], references: [id])
 }
+

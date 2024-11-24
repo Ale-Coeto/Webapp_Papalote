@@ -5,21 +5,16 @@ import AddModifyPin from "~/app/_components/map/AddModifyPin";
 
 const MapPage = async () => {
     const pins = await api.pin.getPins();
-    const zonas = (await api.zone.get()).map(zone => ({
-        ...zone,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    }));
 
     return (
         <div className="h-full bg-fondo p-10" >
-            <div className="mb-5 flex flex-row items-center justify-between">
+            <div className="mb-10 flex flex-row items-center justify-between">
                 <Title text="Eventos Especiales" />
 
-                <AddModifyPin zones={zonas} />
+                <AddModifyPin />
             </div>
-            <MapContainer pinList={pins} zones={zonas} />
-
+            <MapContainer pinList={pins} />
+            
         </div>
     );
 }

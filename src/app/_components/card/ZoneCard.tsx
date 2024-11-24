@@ -34,18 +34,10 @@ export const ZoneCard = ({ zoneId }: { zoneId: number }) => {
         {zone ? (
           <div className="flex flex-row items-center">
             <div
-              className={`mr-3 h-8 w-8 rounded-full`}
+              className={`h-8 w-8 rounded-full`}
               style={{ backgroundColor: zone.color }}
             ></div>
-            <div
-              className={`h-8 w-8 rounded-full`}
-              style={{
-                backgroundImage: zone ? `url(${zone.logo})` : undefined,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            ></div>
-            <div className="ml-5 flex flex-col">
+            <div className="ml-5 mr-auto flex flex-col">
               <p className="font-semibold text-texto">
                 <Link href={`/dashboard/zones/${zoneId}`}>{zone.name}</Link>
               </p>
@@ -54,7 +46,6 @@ export const ZoneCard = ({ zoneId }: { zoneId: number }) => {
                 exhibiciones, {zone._count.questionAnswers} respuestas de zona.
               </p>
             </div>
-
             <div className="ml-auto flex flex-row gap-x-6">
               <FaEdit
                 className="text-lg text-azul duration-200 hover:text-azul-200"
@@ -112,7 +103,7 @@ export const ZoneCard = ({ zoneId }: { zoneId: number }) => {
                 ? {
                     zoneColor: zone.color,
                     zoneDescription: zone.description,
-                    zoneLogo: zone.logo,
+                    zoneLogo: zone.logo ?? undefined,
                     zoneName: zone.name,
                     id: zone.id,
                   }
