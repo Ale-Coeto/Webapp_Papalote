@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo } from "react";
@@ -28,48 +29,53 @@ interface MuseumEntrancesChartProps {
   selectedDate: Date;
 }
 
-export default function MuseumEntrancesChart({ selectedDate }: MuseumEntrancesChartProps) {
-    const museumEntrances = api.museumEntrance.getAll.useQuery();
+interface MuseumEntrance {
+    date: Date;
+    id: number;
+    // Add other fields if needed
+  }
   
-    const isSelectedDate = (dateString: string) => {
-      const date = new Date(dateString);
-      return date.getDate() === selectedDate.getDate() &&
-        date.getMonth() === selectedDate.getMonth() &&
-        date.getFullYear() === selectedDate.getFullYear();
-    };
-  
-    const getTimeInterval = (date: Date) => {
-      const hour = date.getHours();
-      const intervalStart = Math.floor(hour / 2) * 2;
-      return `${intervalStart.toString().padStart(2, '0')}:00-${(intervalStart + 2).toString().padStart(2, '0')}:00`;
-    };
-  
-    const transformData = (data: any[]) => {
-        const selectedDateEntries = data.filter(entrance => isSelectedDate(entrance.date));
-      
-        const entrancesByInterval = selectedDateEntries.reduce((acc: Record<string, number>, entrance) => {
-          const date = new Date(entrance.date);
-          const hour = date.getHours();
-          if (hour >= 10 && hour < 18) {
-            const interval = getTimeInterval(date);
-            acc[interval] = (acc[interval] || 0) + 1;
+  export default function MuseumEntrancesChart({ selectedDate }: MuseumEntrancesChartProps) {
+      const museumEntrances = api.museumEntrance.getAll.useQuery<MuseumEntrance[]>();
+    
+      const isSelectedDate = (date: Date) => {
+        return date.getDate() === selectedDate.getDate() &&
+          date.getMonth() === selectedDate.getMonth() &&
+          date.getFullYear() === selectedDate.getFullYear();
+      };
+    
+      const getTimeInterval = (date: Date) => {
+        const hour = date.getHours();
+        const intervalStart = Math.floor(hour / 2) * 2;
+        return `${intervalStart.toString().padStart(2, '0')}:00-${(intervalStart + 2).toString().padStart(2, '0')}:00`;
+      };
+    
+      const transformData = (data: MuseumEntrance[]) => {
+          const selectedDateEntries = data.filter(entrance => isSelectedDate(entrance.date));
+        
+          const entrancesByInterval = selectedDateEntries.reduce((acc: Record<string, number>, entrance) => {
+            const date = new Date(entrance.date);
+            const hour = date.getHours();
+            if (hour >= 10 && hour < 18) {
+              const interval = getTimeInterval(date);
+              acc[interval] = (acc[interval] ?? 0) + 1;
+            }
+            return acc;
+          }, {});
+        
+          const timeSlots = [];
+          for (let i = 10; i < 18; i += 2) {
+            const interval = `${i.toString().padStart(2, '0')}:00-${(i + 2).toString().padStart(2, '0')}:00`;
+            timeSlots.push({
+              time: interval,
+              entrances: entrancesByInterval[interval] ?? 0
+            });
           }
-          return acc;
-        }, {});
-      
-        const timeSlots = [];
-        for (let i = 10; i < 18; i += 2) {
-          const interval = `${i.toString().padStart(2, '0')}:00-${(i + 2).toString().padStart(2, '0')}:00`;
-          timeSlots.push({
-            time: interval,
-            entrances: entrancesByInterval[interval] || 0
-          });
-        }
-      
-        return timeSlots;
-    };
+        
+          return timeSlots;
+      };
   
-    const chartData = museumEntrances.data ? transformData(museumEntrances.data) : [];
+      const chartData = museumEntrances.data ? transformData(museumEntrances.data) : [];
     
     const formattedDate = selectedDate.toLocaleDateString('es-MX', {
       weekday: 'long',
@@ -107,7 +113,6 @@ export default function MuseumEntrancesChart({ selectedDate }: MuseumEntrancesCh
               <ChartTooltip
                 content={
                   <ChartTooltipContent
-                    className="w-[150px]"
                     nameKey="entrances"
                   />
                 }
