@@ -5,7 +5,7 @@ import Modal from "~/app/_components/Modal";
 import { AddInsigniaForm } from "~/app/_components/form/AddInsigniaForm";
 import AddButton from "./form/AddButton";
 
-export const AddInsigniaCircle = ({ zoneId }: { zoneId: number }) => {
+export const AddInsigniaCircle = ({ zoneId = -1, eventId = -1}: { zoneId?: number, eventId?: number }) => {
   const [openCreate, setOpenCreate] = useState(false);
 
   return (
@@ -20,10 +20,18 @@ export const AddInsigniaCircle = ({ zoneId }: { zoneId: number }) => {
           }}
           isOpen={openCreate}
         >
-          <AddInsigniaForm
+          {zoneId !== -1 &&
+            <AddInsigniaForm
             zone_id={zoneId}
             onCompleted={() => setOpenCreate(false)}
           />
+          }
+          {eventId !== -1 &&
+            <AddInsigniaForm
+            event_id={eventId}
+            onCompleted={() => setOpenCreate(false)}
+          />
+          }
         </Modal>
       )}
     </>

@@ -84,14 +84,14 @@ model Zone {
 
 model Insignia {
   id               Int           @id @default(autoincrement())
-  zone_id          Int
+  zone_id          Int?
   description      String
   nfc_code         String
   special_event_id Int?
   name             String
   logo             String
   special_event    SpecialEvent? @relation(fields: [special_event_id], references: [id])
-  zone             Zone          @relation(fields: [zone_id], references: [id])
+  zone             Zone?          @relation(fields: [zone_id], references: [id])
 
   @@index([zone_id], map: "Insignia_zone_id_fkey")
   @@index([special_event_id], map: "Insignia_special_event_id_fkey")
