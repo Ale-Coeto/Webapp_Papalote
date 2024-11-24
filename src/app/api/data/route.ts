@@ -60,10 +60,8 @@ const getData = async (req: NextRequest) => {
       const exhibitions = await caller.exhibition.get();
       return NextResponse.json({ exhibitions });
     } else if (dataType === "pins") {
-      return NextResponse.json({
-        error: { message: "Not implemented." },
-        status: 500,
-      });
+      const pins = await caller.pin.getPins();
+      return NextResponse.json({ pins });
     } else if (dataType === "insignias") {
       const insignias = await caller.insignia.get();
       return NextResponse.json({ insignias });
