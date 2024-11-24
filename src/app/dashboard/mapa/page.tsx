@@ -19,7 +19,7 @@ const MapPage = async () => {
 
                 <AddModifyPin zones={zonas} />
             </div>
-            <MapContainer pinList={pins} zones={zonas} />
+            <MapContainer zones={zonas} />
 
         </div>
     );
