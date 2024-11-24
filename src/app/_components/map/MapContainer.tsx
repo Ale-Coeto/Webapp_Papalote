@@ -40,10 +40,12 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
             }
         };
 
+        const timeout = setTimeout(updateDimensions, 1000); 
         updateDimensions(); // Set initial dimensions
         window.addEventListener("resize", updateDimensions);
 
         return () => {
+            clearTimeout(timeout);
             window.removeEventListener("resize", updateDimensions);
         };
     }, []);
