@@ -29,6 +29,19 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
             setDimensions({ width, height });
         }
     };
+    useEffect(() => {
+        if (dimensions.width > 0 && dimensions.height > 0) {
+            const updatedPins = pinList.map((pin) => ({
+                ...pin,
+                x: (pin.x * dimensions.width) / 100,
+                y: (pin.y * dimensions.height) / 100,
+            }));
+            if (updatedPins) {
+                setPins(updatedPins);
+            }
+        }
+        console.log("Pins", pins)
+    }, [pinList, dimensions]);
 
     useEffect(() => {
         const timeout = setTimeout(updateDimensions, 1000);
@@ -41,15 +54,6 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
         };
     }, []);
 
-    // useEffect(() => {
-    //     const timeout = setTimeout(updateDimensions, 0); // Ensure updateDimensions runs after render
-    //     window.addEventListener("resize", updateDimensions);
-
-    //     return () => {
-    //         clearTimeout(timeout);
-    //         window.removeEventListener("resize", updateDimensions);
-    //     };
-    // }, []);
     const [pins, setPins] = useState<Pin[]>([]);
 
     useEffect(() => {
@@ -63,11 +67,12 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
 
             setPins(updatedPins);
         }
-    }, [dimensions]);
+    }, [pinList, dimensions]);
 
 
     const [openEdit, setOpenEdit] = useState(false);
     const [selectedPin, setSelectedPin] = useState<Pin>();
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const updatePins = api.pin.updatePins.useMutation({
         onSuccess: async () => {
@@ -75,6 +80,7 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                 title: `¡Pines actualizados!`,
                 description: `Los pines han sido actualizados correctamente`,
             })
+            setRefreshKey((prev) => prev + 1);
         },
         onError: (error) => {
             toast({
@@ -82,6 +88,7 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                 description: error.message || JSON.stringify(error),
             })
         },
+
     });
 
     const tag1 = "Piso 1";
@@ -133,12 +140,12 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
 
     const handleEdit = (pin: Pin) => {
         setSelectedPin(pin);
-        console.log("PIN", pin);
         setOpenEdit(true);
     }
 
     const { toast } = useToast();
     const handleSave = () => {
+
         const copyPins = [...pins];
         pins.map((copyPins) => {
             copyPins.x = (copyPins.x / dimensions.width) * 100;
@@ -146,6 +153,7 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
         })
 
         updatePins.mutate(copyPins);
+        setPins(pinList);
         updateDimensions();
     }
 
@@ -177,7 +185,7 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                             />
                         </div>
 
-                        <div className="absolute top-0 left-0">
+                        <div className="absolute top-0 left-0" key={refreshKey}>
 
                             <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                                 {pins.map((pin, key) => (

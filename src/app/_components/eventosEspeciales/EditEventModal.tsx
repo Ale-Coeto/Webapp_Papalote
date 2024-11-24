@@ -3,6 +3,7 @@ import Button from "../Button";
 import AddButton from "../form/AddButton";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
+import { useEffect } from "react";
 
 interface EditEventModalProps {
   onClose: () => void;
@@ -18,6 +19,7 @@ export default function EditEventModal({
     register,
     setValue,
     watch,
+    reset,
   } = useForm<SpecialEvent>({
     defaultValues: {},
   });
@@ -32,6 +34,16 @@ export default function EditEventModal({
       onClose();
     }
   };
+
+  useEffect(() => {
+    reset({
+        name: event.name,
+        description: event.description,
+        start_date: new Date(startDate),
+        end_date: new Date(endDate),
+        image: event.image,
+    });
+}, [event, reset]);
 
   const onSubmit: SubmitHandler<SpecialEvent> = (data) => {
     editEvent.mutate({
