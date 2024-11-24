@@ -177,7 +177,7 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                             />
                         </div>
 
-                        <div className="absolute top-0 left-0" key={refreshKey}>
+                        <div className="absolute top-0 left-0 z-10" key={refreshKey}>
 
                             <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                                 {pins.map((pin, key) => (

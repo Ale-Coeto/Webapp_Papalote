@@ -107,7 +107,7 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
     };
 
     return (
-        <div className="flex w-full flex-col px-4 pb-4">
+        <div className="flex w-full flex-col px-4 pb-4 z-50">
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex w-full flex-col pb-4">
                     <label>Nombre del pin</label>
