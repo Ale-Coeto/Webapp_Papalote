@@ -4,7 +4,7 @@ import AddButton from "../form/AddButton";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { useEffect } from "react";
-
+import { InsigniasCard } from "../card/InsigniasCard";
 interface EditEventModalProps {
   onClose: () => void;
   event: SpecialEvent;
@@ -66,7 +66,7 @@ export default function EditEventModal({
 
   return (
     <div className="flex w-full flex-col px-4 pb-4">
-      <form onSubmit={handleSubmit(onSubmit)}>
+     <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex w-full flex-col pb-4">
           <label>Nombre del evento</label>
           <input
@@ -150,7 +150,6 @@ export default function EditEventModal({
             />
           )}
         </div>
-
         <div className="flex flex-col pb-6">
           <label>Insignias</label>
           <div className="flex flex-row pt-1">

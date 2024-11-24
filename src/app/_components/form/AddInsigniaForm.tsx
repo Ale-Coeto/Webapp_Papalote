@@ -12,11 +12,13 @@ type FormData = z.infer<typeof existingInsigniaSchema>;
 export const AddInsigniaForm = ({
   onCompleted,
   defaultValues,
-  zone_id,
+  zone_id = undefined,
+  event_id = undefined
 }: {
   onCompleted: () => void;
   defaultValues?: FormData;
-  zone_id: number;
+  zone_id?: number | undefined | null;
+  event_id?: number | undefined;
 }) => {
   const {
     register,
@@ -32,8 +34,8 @@ export const AddInsigniaForm = ({
       insigniaLogo: defaultValues?.insigniaLogo,
       insigniaName: defaultValues?.insigniaName,
       insigniaNfcCode: defaultValues?.insigniaNfcCode,
-      insigniaSpecialEventId: defaultValues?.insigniaSpecialEventId,
-      zone_id: defaultValues?.zone_id ?? zone_id,
+      insigniaSpecialEventId: defaultValues?.insigniaSpecialEventId ?? event_id,
+      zone_id: defaultValues?.zone_id ?? (zone_id === undefined ? null: zone_id),
     },
   });
 
@@ -70,9 +72,12 @@ export const AddInsigniaForm = ({
   });
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
+    console.log("we are trying to create an insignia with this data: ")
+    console.log(data);
     createInsignia.mutate(data);
   };
 
+  console.log("hello")
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="m-3 flex flex-col gap-y-4 text-gris">
