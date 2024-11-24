@@ -3,6 +3,7 @@ import { exhibitionRouter } from "./routers/exhibitions";
 import { insigniaRouter } from "~/server/api/routers/insignia";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { specialEventRouter } from "./routers/specialEvent";
+import { questionRouter } from "~/server/api/routers/question";
 import { visitRouter } from "~/server/api/routers/visit";
 import { lastUpdateRouter } from "~/server/api/routers/lastUpdate";
 import { museumEntranceRouter } from "./routers/museumEntrance";
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   insignia: insigniaRouter,
   specialEvent: specialEventRouter,
   exhibition: exhibitionRouter,
+  question: questionRouter,
   visit: visitRouter,
   lastUpdate: lastUpdateRouter,
   museumEntrance: museumEntranceRouter,

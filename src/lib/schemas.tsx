@@ -4,7 +4,7 @@ const zoneSchema = z.object({
   zoneName: z.string().min(1, "El nombre de la zona es requerido"),
   zoneDescription: z.string().min(1, "La descripción de la zona es requerida"),
   zoneColor: z.string().min(1, "El color de la zona es requerido"),
-  zoneLogo: z.string().optional(),
+  zoneLogo: z.string().min(1, "El logo es requerido"),
 });
 
 export const existingZoneSchema = z.object({
@@ -13,7 +13,8 @@ export const existingZoneSchema = z.object({
 });
 
 const insigniaSchema = z.object({
-  zone_id: z.number().min(1, "La zona es requerida"),
+  //zone_id: z.number().min(1, "La zona es requerida"),
+  zone_id: z.number().optional().nullable(),
   insigniaName: z.string().min(1, "El nombre de la insignia es requerido"),
   insigniaDescription: z
     .string()
@@ -41,4 +42,24 @@ const exhibitionSchema = z.object({
 export const existingExhibitionSchema = z.object({
   ...exhibitionSchema.shape,
   exhibitionId: z.number().optional(),
+});
+
+const questionSchema = z.object({
+  question: z.string().min(1, "La pregunta es requerida"),
+});
+
+export const existingQuestionSchema = z.object({
+  ...questionSchema.shape,
+  questionId: z.number().optional(),
+});
+
+const questionAnswerSchema = z.object({
+  answer: z.string().min(1, "La respuesta es requerida"),
+  zone_id: z.number().min(0, "La zona es requerida"),
+  question_id: z.number(),
+});
+
+export const existingQuestionAnswerSchema = z.object({
+  ...questionAnswerSchema.shape,
+  id: z.number().optional(),
 });

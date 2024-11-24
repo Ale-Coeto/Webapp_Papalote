@@ -8,6 +8,7 @@ import {
 import { existingInsigniaSchema } from "~/lib/schemas";
 import { getImageLink } from "~/server/supabase";
 import { v4 as uuidv4 } from "uuid";
+
 export const insigniaRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.insignia.findMany({
@@ -33,9 +34,31 @@ export const insigniaRouter = createTRPCRouter({
   getIdsByZone: protectedProcedure
     .input(z.object({ zoneId: z.number().min(1) }))
     .query(async ({ input, ctx }) => {
+      console.log("is inside query")
       return await ctx.db.insignia.findMany({
         where: { zone_id: input.zoneId },
         select: { id: true, logo: true },
+        orderBy: { name: "asc" },
+      });
+    }),
+
+    getIdsByEvent: protectedProcedure
+    .input(z.object({ eventId: z.number().min(1) }))
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.insignia.findMany({
+        where: { special_event_id: input.eventId},
+        select: { id: true, logo: true },
+        orderBy: { name: "asc" },
+      });
+    }),
+
+    getAllInfoByZone: protectedProcedure
+    .input(z.object({ zoneId: z.number().min(1) }))
+    .query(async ({ input, ctx }) => {
+      console.log("is inside query")
+      return await ctx.db.insignia.findMany({
+        where: { zone_id: input.zoneId },
+        select: { id: true, logo: true, special_event_id: true },
         orderBy: { name: "asc" },
       });
     }),
