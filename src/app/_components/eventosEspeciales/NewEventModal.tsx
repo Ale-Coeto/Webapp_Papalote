@@ -1,7 +1,7 @@
-import { SpecialEvent } from "@prisma/client";
+import type { SpecialEvent } from "@prisma/client";
 import Button from "../Button";
 import AddButton from "../form/AddButton";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 
 export default function NewEventModal({ onClose }: { onClose: () => void }) {
@@ -9,7 +9,6 @@ export default function NewEventModal({ onClose }: { onClose: () => void }) {
     handleSubmit,
     register,
     setValue,
-    formState: { errors },
   } = useForm<SpecialEvent>({ defaultValues: {} });
   const addEvent = api.specialEvent.createSpecialEvent.useMutation();
 
