@@ -31,6 +31,10 @@ export const QuestionCard = ({
       await utils.question.getById.invalidate();
     },
     onError: (error) => {
+      toast({
+        title: "Ocurrió un error.",
+        description: `${error.message}`,
+      });
       console.error(error);
     },
   });

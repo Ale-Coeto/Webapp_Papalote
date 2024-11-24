@@ -71,15 +71,15 @@ model VerificationToken {
 model Zone {
   id              Int              @id @default(autoincrement())
   name            String
-  logo            String
+  logo            String           @db.Text
   color           String
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   description     String
   exhibitions     Exhibition[]
   insignias       Insignia[]
-  questionAnswers QuestionAnswer[]
   pins            Pin[]
+  questionAnswers QuestionAnswer[]
 }
 
 model Insignia {
@@ -89,9 +89,9 @@ model Insignia {
   nfc_code         String
   special_event_id Int?
   name             String
-  logo             String
+  logo             String        @db.Text
   special_event    SpecialEvent? @relation(fields: [special_event_id], references: [id])
-  zone             Zone?          @relation(fields: [zone_id], references: [id])
+  zone             Zone?         @relation(fields: [zone_id], references: [id])
 
   @@index([zone_id], map: "Insignia_zone_id_fkey")
   @@index([special_event_id], map: "Insignia_special_event_id_fkey")
@@ -121,7 +121,7 @@ model Exhibition {
   zone_id     Int
   name        String
   is_open     Boolean
-  image       String
+  image       String  @db.Text
   description String
   Zone        Zone    @relation(fields: [zone_id], references: [id])
 
@@ -151,18 +151,20 @@ model SpecialEvent {
   start_date  DateTime
   end_date    DateTime
   description String
-  image       String
+  image       String     @db.Text
   insignias   Insignia[]
 }
 
 model Pin {
   id      Int    @id @default(autoincrement())
-  name    String
-  piso    Int
   color   String
   icon    String
   x       Int
   y       Int
+  name    String
+  piso    Int
   zone_id Int?
   zone    Zone?  @relation(fields: [zone_id], references: [id])
+
+  @@index([zone_id], map: "Pin_zone_id_fkey")
 }
