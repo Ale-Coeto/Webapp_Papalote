@@ -47,13 +47,15 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
 
     const { toast } = useToast();
     console.log("editing", pin)
+    const utils = api.useUtils();
 
     const editPin = api.pin.updatePin.useMutation({
         onSuccess: async (data) => {
             toast({
                 title: `¡Pin actualizado!`,
                 description: `${data.name}`,
-            })
+            });
+            await utils.pin.invalidate();
         },
         onError: (error) => {
             toast({
@@ -68,6 +70,7 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
                 title: `¡Pin eliminado!`,
                 description: `${data.name}`,
             })
+            await utils.pin.invalidate();
         },
         onError: (error) => {
             toast({
@@ -104,7 +107,7 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
     };
 
     return (
-        <div className="flex w-full flex-col px-4 pb-4">
+        <div className="flex w-full flex-col px-4 pb-4 z-50">
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex w-full flex-col pb-4">
                     <label>Nombre del pin</label>

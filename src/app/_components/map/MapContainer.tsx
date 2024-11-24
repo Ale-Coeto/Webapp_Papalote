@@ -19,9 +19,11 @@ import Modal from "../Modal";
 import EditPinsModal from "./EditPinsModal";
 import { iconDictionary } from "~/utils/icons";
 
-const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) => {
+const MapContainer = ({ zones }: { zones?: Zone[] }) => {
     const divRef = useRef<HTMLDivElement>(null); // Reference for the div
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+    const { data: pines, isLoading, error } = api.pin.getPins.useQuery();
+    const [pins, setPins] = useState<Pin[]>(pines ?? []);
 
     const updateDimensions = () => {
         if (divRef.current) {
@@ -29,50 +31,39 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
             setDimensions({ width, height });
         }
     };
-    useEffect(() => {
-        if (dimensions.width > 0 && dimensions.height > 0) {
-            const updatedPins = pinList.map((pin) => ({
-                ...pin,
-                x: (pin.x * dimensions.width) / 100,
-                y: (pin.y * dimensions.height) / 100,
-            }));
-            if (updatedPins) {
-                setPins(updatedPins);
-            }
-        }
-        console.log("Pins", pins)
-    }, [pinList, dimensions]);
 
     useEffect(() => {
-        const timeout = setTimeout(updateDimensions, 1000);
-        updateDimensions();
+        const updateDimensions = () => {
+            if (divRef.current) {
+                const { width, height } = divRef.current.getBoundingClientRect();
+                setDimensions({ width, height });
+            }
+        };
+
+        updateDimensions(); // Set initial dimensions
         window.addEventListener("resize", updateDimensions);
 
         return () => {
-            clearTimeout(timeout);
             window.removeEventListener("resize", updateDimensions);
         };
     }, []);
 
-    const [pins, setPins] = useState<Pin[]>([]);
-
     useEffect(() => {
-        if (dimensions.width > 0 && dimensions.height > 0) {
-            // Recalculate pins when dimensions are updated
-            const updatedPins = pinList.map((pin) => ({
+        if (dimensions.width > 0 && dimensions.height > 0 && pines) {
+            const updatedPins = pines.map((pin) => ({
                 ...pin,
                 x: (pin.x * dimensions.width) / 100,
                 y: (pin.y * dimensions.height) / 100,
             }));
-
             setPins(updatedPins);
         }
-    }, [pinList, dimensions]);
+    }, [pines, dimensions]);
 
 
     const [openEdit, setOpenEdit] = useState(false);
     const [selectedPin, setSelectedPin] = useState<Pin>();
     const [refreshKey, setRefreshKey] = useState(0);
+    const utils = api.useUtils();
 
     const updatePins = api.pin.updatePins.useMutation({
         onSuccess: async () => {
@@ -81,6 +72,8 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                 description: `Los pines han sido actualizados correctamente`,
             })
             setRefreshKey((prev) => prev + 1);
+            await utils.pin.invalidate();
+            await utils.pin.getPins.fetch();
         },
         onError: (error) => {
             toast({
@@ -153,7 +146,6 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
         })
 
         updatePins.mutate(copyPins);
-        setPins(pinList);
         updateDimensions();
     }
 
@@ -185,7 +177,7 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                             />
                         </div>
 
-                        <div className="absolute top-0 left-0" key={refreshKey}>
+                        <div className="absolute top-0 left-0 z-10" key={refreshKey}>
 
                             <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                                 {pins.map((pin, key) => (
