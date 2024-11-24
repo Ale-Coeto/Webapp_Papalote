@@ -32,15 +32,31 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
         }
     };
 
-    useEffect(() => {
-        const updateDimensions = () => {
-            if (divRef.current) {
-                const { width, height } = divRef.current.getBoundingClientRect();
-                setDimensions({ width, height });
-            }
-        };
+    const [scale, setScale] = useState(1);
+    const handleZoom = () => {
+        setScale(Math.min(dimensions.width / 1474, dimensions.height / 1322)); // Use smaller scale for uniform scaling
+    };
 
-        const timeout = setTimeout(updateDimensions, 1000); 
+
+    useEffect(() => {
+        if (dimensions.width > 0 && dimensions.height > 0) {
+            handleZoom();
+        }
+
+        if (dimensions.width > 0 && dimensions.height > 0 && pines) {
+            const updatedPins = pines.map((pin) => ({
+                ...pin,
+                // Scale positions based on percentage of current dimensions
+                x: (pin.x / 100) * dimensions.width,
+                y: (pin.y / 100) * dimensions.height,
+            }));
+            setPins(updatedPins);
+        }
+    }, [pines, dimensions]);
+
+    useEffect(() => {
+
+        const timeout = setTimeout(updateDimensions, 1000);
         updateDimensions(); // Set initial dimensions
         window.addEventListener("resize", updateDimensions);
 
@@ -50,16 +66,6 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
         };
     }, []);
 
-    useEffect(() => {
-        if (dimensions.width > 0 && dimensions.height > 0 && pines) {
-            const updatedPins = pines.map((pin) => ({
-                ...pin,
-                x: (pin.x * dimensions.width) / 100,
-                y: (pin.y * dimensions.height) / 100,
-            }));
-            setPins(updatedPins);
-        }
-    }, [pines, dimensions]);
 
 
     const [openEdit, setOpenEdit] = useState(false);
@@ -117,11 +123,13 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
         setPins((prevPins) =>
 
             prevPins.map((pin) => {
+                const pinSize = 80 * scale; // Base size (40px) scaled dynamically
                 const x = pin.x + delta.x;
                 const y = pin.y + delta.y;
 
-                const boundX = Math.min(Math.max(0, x), dimensions.width - 32);
-                const boundY = Math.min(Math.max(0, y), dimensions.height - 32);
+                // Boundaries accounting for the dynamically scaled pin size
+                const boundX = Math.min(Math.max(0, x), dimensions.width - pinSize);
+                const boundY = Math.min(Math.max(0, y), dimensions.height - pinSize);
 
                 return (
                     pin.id === pinId
@@ -139,17 +147,28 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
     }
 
     const { toast } = useToast();
+    // const handleSave = () => {
+
+    //     const copyPins = [...pins];
+    //     pins.map((copyPins) => {
+    //         copyPins.x = (copyPins.x / dimensions.width) * 100;
+    //         copyPins.y = (copyPins.y / dimensions.height) * 100;
+    //     })
+
+    //     updatePins.mutate(copyPins);
+    //     updateDimensions();
+    // }
     const handleSave = () => {
+        const updatedPins = pins.map((pin) => ({
+            ...pin,
+            x: (pin.x / dimensions.width) * 100,
+            y: (pin.y / dimensions.height) * 100,
+        }));
 
-        const copyPins = [...pins];
-        pins.map((copyPins) => {
-            copyPins.x = (copyPins.x / dimensions.width) * 100;
-            copyPins.y = (copyPins.y / dimensions.height) * 100;
-        })
-
-        updatePins.mutate(copyPins);
+        updatePins.mutate(updatedPins); // Mutate the updated pins
+        setPins(updatedPins); // Update the local state
         updateDimensions();
-    }
+    };
 
 
 
@@ -169,13 +188,13 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                 </div>
                 <div className="flex flex-col md:flex-row gap-6 pt-4 h-max">
 
-                    <div className="w-1/2 border h-auto bg-gray-200 relative">
+                    <div className="w-1/2 h-auto relative">
                         <div ref={divRef}>
                             <img
 
                                 src={variant == tag1 ? "/Mapa_A.png" : "/Mapa_B.png"}
                                 alt="Map or Background"
-                                className="w-full h-full object-contain"
+                                className="w-full h-full object-contain bg-gray-200"
                             />
                         </div>
 
@@ -188,7 +207,7 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                                             key={key}
                                             pin={pin}
                                             isDragging={activePinId === pin.id}
-                                            imageRect={dimensions}
+                                            scale={scale}
                                         />
                                     )
                                 ))}
