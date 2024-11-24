@@ -150,12 +150,6 @@ export default function EditEventModal({
             />
           )}
         </div>
-        <div className="flex flex-col pb-6">
-          <label>Insignias</label>
-          <div className="flex flex-row pt-1">
-            <AddButton onClick={onClose} />
-          </div>
-        </div>
         <div className="flex flex-row justify-end gap-4">
           <Button label="Eliminar" onClick={handleDelete} danger full />
           <Button submit label="Guardar" full />

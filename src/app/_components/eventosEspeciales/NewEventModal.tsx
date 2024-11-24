@@ -86,13 +86,6 @@ export default function NewEventModal({ onClose }: { onClose: () => void }) {
             {...register("image")}
           />
         </div>
-
-        <div className="flex flex-col pb-6">
-          <label>Insignias</label>
-          <div className="flex flex-row pt-1">
-            <AddButton onClick={onClose} />
-          </div>
-        </div>
         <Button submit label="Agregar" full />
       </form>
     </div>
