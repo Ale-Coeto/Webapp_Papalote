@@ -8,6 +8,26 @@ import {
 import { TRPCError } from "@trpc/server";
 
 export const questionRouter = createTRPCRouter({
+  get: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.question.findMany({
+      select: {
+        id: true,
+        question: true,
+      },
+      orderBy: { id: "asc" },
+    });
+  }),
+  getAnswers: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.questionAnswer.findMany({
+      select: {
+        id: true,
+        zone_id: true,
+        question_id: true,
+        answer: true,
+      },
+      orderBy: { id: "asc" },
+    });
+  }),
   getIds: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.question.findMany({
       select: { id: true },
