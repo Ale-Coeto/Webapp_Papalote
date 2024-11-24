@@ -13,7 +13,8 @@ export const existingZoneSchema = z.object({
 });
 
 const insigniaSchema = z.object({
-  zone_id: z.number().min(1, "La zona es requerida"),
+  //zone_id: z.number().min(1, "La zona es requerida"),
+  zone_id: z.number().optional().nullable(),
   insigniaName: z.string().min(1, "El nombre de la insignia es requerido"),
   insigniaDescription: z
     .string()

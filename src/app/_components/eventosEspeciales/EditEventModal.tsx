@@ -3,7 +3,8 @@ import Button from "../Button";
 import AddButton from "../form/AddButton";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
-
+import { useEffect } from "react";
+import { InsigniasCard } from "../card/InsigniasCard";
 interface EditEventModalProps {
   onClose: () => void;
   event: SpecialEvent;
@@ -18,6 +19,7 @@ export default function EditEventModal({
     register,
     setValue,
     watch,
+    reset,
   } = useForm<SpecialEvent>({
     defaultValues: {},
   });
@@ -32,6 +34,16 @@ export default function EditEventModal({
       onClose();
     }
   };
+
+  useEffect(() => {
+    reset({
+        name: event.name,
+        description: event.description,
+        start_date: new Date(startDate),
+        end_date: new Date(endDate),
+        image: event.image,
+    });
+}, [event, reset]);
 
   const onSubmit: SubmitHandler<SpecialEvent> = (data) => {
     editEvent.mutate({
@@ -54,7 +66,7 @@ export default function EditEventModal({
 
   return (
     <div className="flex w-full flex-col px-4 pb-4">
-      <form onSubmit={handleSubmit(onSubmit)}>
+     <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex w-full flex-col pb-4">
           <label>Nombre del evento</label>
           <input
@@ -137,13 +149,6 @@ export default function EditEventModal({
               className="mx-auto w-64 pt-3"
             />
           )}
-        </div>
-
-        <div className="flex flex-col pb-6">
-          <label>Insignias</label>
-          <div className="flex flex-row pt-1">
-            <AddButton onClick={onClose} />
-          </div>
         </div>
         <div className="flex flex-row justify-end gap-4">
           <Button label="Eliminar" onClick={handleDelete} danger full />

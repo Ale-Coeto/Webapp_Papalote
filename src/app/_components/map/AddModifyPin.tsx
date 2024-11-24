@@ -6,18 +6,12 @@ import Modal from "../Modal";
 import NewPinModal from "./NewPinModal";
 import { Zone } from "@prisma/client";
 
-const AddModifyPin = ({zones} : {zones?:Zone[]}) => {
+const AddModifyPin = ({ zones }: { zones?: Zone[] }) => {
     const [openNew, setOpenNew] = useState(false);
 
     return (
-        <div>
+        <div className="z-50">
             <div className="flex flex-row gap-4">
-                {/* <AddButton
-                    label="Editar pines"
-                    onClick={() => {
-                        setOpenEdit(true);
-                    }}
-                /> */}
 
                 <AddButton
                     label="Agregar pin"
@@ -39,7 +33,7 @@ const AddModifyPin = ({zones} : {zones?:Zone[]}) => {
                 <NewPinModal onClose={() => setOpenNew(false)} zones={zones} />
             </Modal>
 
-            
+
         </div>
     )
 }

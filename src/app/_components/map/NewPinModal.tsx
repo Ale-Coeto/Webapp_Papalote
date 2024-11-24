@@ -29,13 +29,15 @@ const NewPinModal = ({ onClose, zones }: { onClose: () => void, zones?: Zone[] }
     } = useForm<Pin>({ defaultValues: {} });
 
     const { toast } = useToast();
+    const utils = api.useUtils();
 
     const addPin = api.pin.createPin.useMutation({
         onSuccess: async (data) => {
             toast({
                 title: `¡Pin creado!`,
                 description: `${data.name}`,
-            })
+            });
+            await utils.pin.invalidate();
         },
         onError: (error) => {
             toast({
@@ -66,7 +68,7 @@ const NewPinModal = ({ onClose, zones }: { onClose: () => void, zones?: Zone[] }
     };
 
     return (
-        <div className="flex w-full flex-col px-4 pb-4 z-10">
+        <div className="flex w-full flex-col px-4 pb-4 z-50 ">
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex w-full flex-col pb-6">
                     <label>Nombre</label>

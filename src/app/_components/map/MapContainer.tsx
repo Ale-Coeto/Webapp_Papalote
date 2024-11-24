@@ -19,9 +19,11 @@ import Modal from "../Modal";
 import EditPinsModal from "./EditPinsModal";
 import { iconDictionary } from "~/utils/icons";
 
-const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) => {
+const MapContainer = ({ zones }: { zones?: Zone[] }) => {
     const divRef = useRef<HTMLDivElement>(null); // Reference for the div
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+    const { data: pines, isLoading, error } = api.pin.getPins.useQuery();
+    const [pins, setPins] = useState<Pin[]>(pines ?? []);
 
     const updateDimensions = () => {
         if (divRef.current) {
@@ -31,32 +33,39 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
     };
 
     useEffect(() => {
-        updateDimensions();
+        const updateDimensions = () => {
+            if (divRef.current) {
+                const { width, height } = divRef.current.getBoundingClientRect();
+                setDimensions({ width, height });
+            }
+        };
+
+        const timeout = setTimeout(updateDimensions, 1000); 
+        updateDimensions(); // Set initial dimensions
         window.addEventListener("resize", updateDimensions);
 
         return () => {
+            clearTimeout(timeout);
             window.removeEventListener("resize", updateDimensions);
         };
     }, []);
 
-    const [pins, setPins] = useState<Pin[]>([]);
-
     useEffect(() => {
-        if (dimensions.width > 0 && dimensions.height > 0) {
-            // Recalculate pins when dimensions are updated
-            const updatedPins = pinList.map((pin) => ({
+        if (dimensions.width > 0 && dimensions.height > 0 && pines) {
+            const updatedPins = pines.map((pin) => ({
                 ...pin,
                 x: (pin.x * dimensions.width) / 100,
                 y: (pin.y * dimensions.height) / 100,
             }));
-
             setPins(updatedPins);
         }
-    }, [dimensions]);
+    }, [pines, dimensions]);
 
 
     const [openEdit, setOpenEdit] = useState(false);
     const [selectedPin, setSelectedPin] = useState<Pin>();
+    const [refreshKey, setRefreshKey] = useState(0);
+    const utils = api.useUtils();
 
     const updatePins = api.pin.updatePins.useMutation({
         onSuccess: async () => {
@@ -64,6 +73,9 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                 title: `¡Pines actualizados!`,
                 description: `Los pines han sido actualizados correctamente`,
             })
+            setRefreshKey((prev) => prev + 1);
+            await utils.pin.invalidate();
+            await utils.pin.getPins.fetch();
         },
         onError: (error) => {
             toast({
@@ -71,6 +83,7 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                 description: error.message || JSON.stringify(error),
             })
         },
+
     });
 
     const tag1 = "Piso 1";
@@ -122,12 +135,12 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
 
     const handleEdit = (pin: Pin) => {
         setSelectedPin(pin);
-        console.log("PIN", pin);
         setOpenEdit(true);
     }
 
     const { toast } = useToast();
     const handleSave = () => {
+
         const copyPins = [...pins];
         pins.map((copyPins) => {
             copyPins.x = (copyPins.x / dimensions.width) * 100;
@@ -156,15 +169,17 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                 </div>
                 <div className="flex flex-col md:flex-row gap-6 pt-4 h-max">
 
-                    <div ref={divRef} className="w-1/2 border bg-gray-200 relative">
+                    <div className="w-1/2 border h-auto bg-gray-200 relative">
+                        <div ref={divRef}>
+                            <img
 
-                        <img
-                            src={variant == tag1 ? "/Mapa_A.png" : "/Mapa_B.png"}
-                            alt="Map or Background"
-                            className="w-full h-auto object-contain"
-                        />
+                                src={variant == tag1 ? "/Mapa_A.png" : "/Mapa_B.png"}
+                                alt="Map or Background"
+                                className="w-full h-full object-contain"
+                            />
+                        </div>
 
-                        <div className="absolute top-0 left-0">
+                        <div className="absolute top-0 left-0 z-10" key={refreshKey}>
 
                             <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                                 {pins.map((pin, key) => (
@@ -206,8 +221,8 @@ const MapContainer = ({ pinList, zones }: { pinList: Pin[], zones?: Zone[] }) =>
                                                 backgroundColor: pin.color,
                                             }}
                                                 className="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg">
-                                              {iconDictionary[pin.icon]?.icon?.({})}
- 
+                                                {iconDictionary[pin.icon]?.icon?.({})}
+
                                             </div>
 
                                             <div className="flex flex-col">

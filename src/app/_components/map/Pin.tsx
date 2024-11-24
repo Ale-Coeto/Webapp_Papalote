@@ -31,7 +31,7 @@ const PinIcon: React.FC<PinProps> = ({ pin, isDragging }) => {
     };
 
     return (
-        <div>
+        <div className="z-10">
 
             <div className="absolute" style={{ ...style, width: "fit-content" }}>
                 <div
@@ -39,9 +39,12 @@ const PinIcon: React.FC<PinProps> = ({ pin, isDragging }) => {
                     {...listeners}
                     {...attributes}
                     style={{ backgroundColor: pin.color }}
-                    className="rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg border-2 border-white z-40 relative"
+                    className="rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg border-2 border-white z-10 relative"
                 >
-                    {IconComponent && <IconComponent />}
+                    <div className="relative">
+                        {IconComponent && <IconComponent />}
+                    </div>
+
                 </div>
 
                 <div
