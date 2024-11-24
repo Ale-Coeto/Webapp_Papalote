@@ -27,7 +27,13 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 0.5rem;
+    --color-pertenezco: #FF6B6B;  
+    --color-comunico: #4ECDC4;   
+    --color-comprendo: #45B7D1;  
+    --color-soy: #96CEB4;         
+    --color-expreso: #FFBE0B;     
+    --color-pequenos: #FF006E;
   }
   .dark {
     --background: 0 0% 3.9%;
