@@ -37,6 +37,19 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
             setDimensions({ width, height });
         }
     };
+    useEffect(() => {
+        if (dimensions.width > 0 && dimensions.height > 0) {
+            const updatedPins = pinList.map((pin) => ({
+                ...pin,
+                x: (pin.x * dimensions.width) / 100,
+                y: (pin.y * dimensions.height) / 100,
+            }));
+            if (updatedPins) {
+                setPins(updatedPins);
+            }
+        }
+        console.log("Pins", pins)
+    }, [pinList, dimensions]);
 
     useEffect(() => {
         updateDimensions();
@@ -60,11 +73,12 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
 
             setPins(updatedPins);
         }
-    }, [dimensions]);
+    }, [pinList, dimensions]);
 
 
     const [openEdit, setOpenEdit] = useState(false);
     const [selectedPin, setSelectedPin] = useState<Pin>();
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const updatePins = api.pin.updatePins.useMutation({
         onSuccess: async (data) => {
@@ -72,6 +86,7 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
                 title: `¡Pines actualizados!`,
                 description: `Los pines han sido actualizados correctamente`,
             })
+            setRefreshKey((prev) => prev + 1);
         },
         onError: (error) => {
             toast({
@@ -79,6 +94,7 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
                 description: error.message || JSON.stringify(error),
             })
         },
+
     });
 
     const tag1 = "Piso 1";
@@ -130,12 +146,12 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
 
     const handleEdit = (pin: Pin) => {
         setSelectedPin(pin);
-        console.log("PIN", pin);
         setOpenEdit(true);
     }
 
     const { toast } = useToast();
     const handleSave = () => {
+
         const copyPins = [...pins];
         pins.map((copyPins) => {
             copyPins.x = (copyPins.x / dimensions.width) * 100;
@@ -143,6 +159,7 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
         })
 
         updatePins.mutate(copyPins);
+        setPins(pinList);
         updateDimensions();
     }
 
@@ -165,7 +182,7 @@ const MapContainer = ({ pinList }: { pinList: Pin[] }) => {
                             className="w-full h-auto object-contain"
                         />
 
-                        <div className="absolute top-0 left-0">
+                        <div className="absolute top-0 left-0" key={refreshKey}>
 
                             <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                                 {pins.map((pin) => (
