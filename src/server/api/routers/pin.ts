@@ -14,6 +14,7 @@ export const pinRouter = createTRPCRouter({
         color: z.string(),
         icon: z.string(),
         piso: z.number(),
+        zone_id: z.number().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
         return ctx.db.pin.create({
@@ -24,6 +25,13 @@ export const pinRouter = createTRPCRouter({
                 piso: input.piso,
                 x: 0,
                 y: 0,
+                ...(input.zone_id && {
+                    zone: {
+                        connect: {
+                            id: input.zone_id,
+                        },
+                    },
+                }),
             },
         });
     }),
