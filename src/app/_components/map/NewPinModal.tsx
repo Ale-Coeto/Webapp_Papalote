@@ -29,13 +29,15 @@ const NewPinModal = ({ onClose, zones }: { onClose: () => void, zones?: Zone[] }
     } = useForm<Pin>({ defaultValues: {} });
 
     const { toast } = useToast();
+    const utils = api.useUtils();
 
     const addPin = api.pin.createPin.useMutation({
         onSuccess: async (data) => {
             toast({
                 title: `¡Pin creado!`,
                 description: `${data.name}`,
-            })
+            });
+            await utils.pin.invalidate();
         },
         onError: (error) => {
             toast({
