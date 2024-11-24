@@ -78,13 +78,12 @@ const exhibitionColors = {
     export default function ExhibitionVisit({ selectedDate }: ExhibitionVisitProps) {
         const exhibitionVisits = api.visit.getExhibitionVisits.useQuery();
     
-        const isSelectedDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.getDate() === selectedDate.getDate() &&
-            date.getMonth() === selectedDate.getMonth() &&
-            date.getFullYear() === selectedDate.getFullYear();
+        const isSelectedDate = (dateObj: Date) => {
+        return dateObj.getDate() === selectedDate.getDate() &&
+            dateObj.getMonth() === selectedDate.getMonth() &&
+            dateObj.getFullYear() === selectedDate.getFullYear();
         };
-  
+
         const formatDate = () => {
             return selectedDate.toLocaleDateString('es-MX', { 
             weekday: 'long', 
@@ -93,22 +92,25 @@ const exhibitionColors = {
             day: 'numeric' 
             });
         };
+        interface ExhibitionVisit {
+            date: Date;
+            exhibition_id: string;
+          }
     
-        const transformData = (data: any[]) => {
+        const transformData = (data: ExhibitionVisit[]) => {
             const selectedDateVisits = data.filter(visit => isSelectedDate(visit.date));
-
             
             const exhibitionCounts = selectedDateVisits.reduce((acc: Record<string, number>, visit) => {
-            acc[visit.exhibition_id] = (acc[visit.exhibition_id] || 0) + 1;
-            return acc;
+                acc[visit.exhibition_id] = (acc[visit.exhibition_id] ?? 0) + 1;
+                return acc;
             }, {});
         
             return Object.entries(exhibitionCounts).map(([id, count]) => ({
-            zona: exhibitionNames[id as keyof typeof exhibitionNames] || `Exhibition ${id}`,
-            Visitas: count,
-            fill: exhibitionColors[id as keyof typeof exhibitionColors] || "#808080"
-        }));
-    };
+                zona: exhibitionNames[id as keyof typeof exhibitionNames] ?? `Exhibition ${id}`,
+                Visitas: count,
+                fill: exhibitionColors[id as keyof typeof exhibitionColors] ?? "#808080"
+            }));
+        };
     
         const chartData = exhibitionVisits.data ? transformData(exhibitionVisits.data) : [];
     
