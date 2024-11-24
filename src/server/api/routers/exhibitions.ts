@@ -55,8 +55,6 @@ export const exhibitionRouter = createTRPCRouter({
         input.exhibitionId ? String(input.exhibitionId) : newUuid,
       );
 
-      console.log("imageLink", imageLink);
-
       if (input.exhibitionId) {
         return ctx.db.exhibition.update({
           where: { id: input.exhibitionId },

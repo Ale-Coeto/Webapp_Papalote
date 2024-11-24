@@ -29,6 +29,7 @@ export const QuestionCard = ({
         description: `Pregunta: ${data.question}`,
       });
       await utils.question.getById.invalidate();
+      await utils.question.getIds.invalidate();
     },
     onError: (error) => {
       toast({

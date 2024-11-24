@@ -46,6 +46,8 @@ export const AddZoneForm = ({
         description: `${data.name} | ${data.createdAt.toISOString()}`,
       });
       await utils.zone.invalidate();
+      await utils.zone.getIds.invalidate();
+
       onCompleted();
     },
     onError: (error) => {

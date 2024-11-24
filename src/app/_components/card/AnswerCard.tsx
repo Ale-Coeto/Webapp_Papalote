@@ -25,11 +25,16 @@ export const AnswerCard = ({
     { id: answer?.zone_id ?? 0 },
     { enabled: !!answer?.zone_id },
   );
+  const utils = api.useUtils();
+
   const deleteAnswer = api.question.deleteAnswer.useMutation({
     onSuccess: async (data) => {
       toast({
         title: "Respuesta Borrada!",
         description: `Respuesta: ${data.answer}`,
+      });
+      await utils.question.getAnswerIds.invalidate({
+        questionId: answer?.question_id,
       });
     },
     onError: (error) => {

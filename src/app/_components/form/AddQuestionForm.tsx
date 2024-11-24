@@ -40,7 +40,7 @@ export const AddQuestionForm = ({
         title: `Pregunta ${verb}!`,
         description: `${data.question}`,
       });
-      await utils.zone.invalidate();
+      await utils.question.getIds.invalidate();
       onCompleted();
     },
     onError: (error) => {

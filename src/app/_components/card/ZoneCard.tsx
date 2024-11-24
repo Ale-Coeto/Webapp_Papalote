@@ -13,12 +13,15 @@ import { AddZoneForm } from "~/app/_components/form/AddZoneForm";
 
 export const ZoneCard = ({ zoneId }: { zoneId: number }) => {
   const { data: zone } = api.zone.getZoneOverviewById.useQuery({ id: zoneId });
+  const utils = api.useUtils();
+
   const deleteZone = api.zone.delete.useMutation({
     onSuccess: async (data) => {
       toast({
         title: "¡Zona Borrada!",
         description: `${data.name} | ${data.createdAt.toISOString()}`,
       });
+      await utils.zone.getIds.invalidate();
     },
     onError: (error) => {
       toast({
