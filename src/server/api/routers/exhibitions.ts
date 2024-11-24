@@ -71,7 +71,7 @@ export const exhibitionRouter = createTRPCRouter({
       return await ctx.db.exhibition.create({
         data: {
           description: input.exhibitionDescription,
-          image: input.exhibitionImage,
+          image: imageLink,
           name: input.exhibitionName,
           is_open: input.exhibitionIsOpen,
           zone_id: input.zone_id,

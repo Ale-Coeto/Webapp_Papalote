@@ -66,6 +66,7 @@ export const AddExhbitionForm = ({
         title: "Exhibición Borrada!",
         description: `Nombre: ${data.name}`,
       });
+      await utils.exhibition.getIdsByZone.invalidate();
     },
     onError: (error) => {
       toast({
@@ -77,7 +78,9 @@ export const AddExhbitionForm = ({
   });
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    createExhibition.mutate(data);
+    if (createExhibition.isIdle) {
+      createExhibition.mutate(data);
+    }
   };
 
   return (
@@ -161,10 +164,13 @@ export const AddExhbitionForm = ({
           {defaultValues?.exhibitionId && (
             <button
               className="w-full rounded-lg bg-red-500 p-3 text-white"
+              type="button"
               onClick={() => {
-                deleteExhibition.mutate({
-                  id: defaultValues.exhibitionId ?? -1,
-                });
+                if (deleteExhibition.isIdle) {
+                  deleteExhibition.mutate({
+                    id: defaultValues.exhibitionId ?? -1,
+                  });
+                }
               }}
             >
               Eliminar exhibición
