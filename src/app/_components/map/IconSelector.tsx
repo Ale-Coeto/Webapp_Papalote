@@ -20,7 +20,7 @@ const IconSelector = ({ selected, setSelected }: {
                 </SelectTrigger>
 
                 <SelectContent>
-                    {icons.map((icon, key) => (
+                    {icons.map((icon ) => (
                         <SelectItem key={icon.name} value={icon.value}>
                             <div className="flex flex-row gap-2">
                                 <icon.icon className="w-6 h-6" />

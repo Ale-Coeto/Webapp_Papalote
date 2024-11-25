@@ -8,6 +8,7 @@ import { useToast } from "~/hooks/use-toast";
 import { useEffect, useState } from "react";
 import IconSelector from "./IconSelector";
 import { iconDictionary } from "../../../utils/icons";
+import ZoneSelector from "./ZoneSelector";
 interface EditPinsModalProps {
     onClose: () => void;
     pin: Pin;
@@ -21,23 +22,31 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
         setValue,
         reset,
         formState: { errors },
-    } = useForm<Pin>({ defaultValues: {
-        name: pin.name,
-        color: pin.color,
-        icon: pin.icon,
-        piso: pin.piso,
-    } });
+    } = useForm<Pin>({
+        defaultValues: {
+            name: pin.name,
+            color: pin.color,
+            icon: pin.icon,
+            piso: pin.piso ?? 1,
+            zone_id: pin.zone_id,
+        }
+    });
 
     const [selected, setSelected] = useState(iconDictionary[pin.icon]?.value ?? "Sin seleccionar");
-    
+    const [selectedZone, setSelectedZone] = useState<number>(pin.zone_id ?? -1);
+
     useEffect(() => {
+        console.log("Default piso value:", pin.piso);
         reset({
             name: pin.name,
             color: pin.color,
             icon: pin.icon,
             piso: pin.piso,
+            zone_id: pin.zone_id,
         });
+        setValue("piso", pin.piso ?? 1);
         setSelected(iconDictionary[pin.icon]?.value ?? "Sin seleccionar");
+        setSelectedZone(pin.zone_id ?? -1);
     }, [pin, reset]);
 
     const handleIconSelect = (value: string) => {
@@ -46,8 +55,11 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
     };
 
     const { toast } = useToast();
-    console.log("editing", pin)
     const utils = api.useUtils();
+    const handleZoneSelect = (value: number) => {
+        setSelectedZone(value);
+        setValue("zone_id", value);
+    };
 
     const editPin = api.pin.updatePin.useMutation({
         onSuccess: async (data) => {
@@ -87,15 +99,15 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
             onClose();
         }
     };
-
+    console.log(pin.piso)
     const onSubmit: SubmitHandler<Pin> = (data) => {
-        console.log(data)
         editPin.mutate({
             id: pin.id,
             name: data.name ?? "",
             color: data.color ?? "",
             icon: data.icon ?? "",
             piso: Number(data.piso) ?? 1,
+            zone_id: data.zone_id !== -1 && data.zone_id !== null ? data.zone_id : undefined,
         });
 
         setValue("name", "");
@@ -123,24 +135,30 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
 
                 <div className="flex flex-col pb-6">
                     <label>Piso</label>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2" key={pin.id}>
                         <input
-                            id="color"
-                            defaultChecked={pin.piso === 1}
+                            id="piso1"
+                            defaultChecked={pin.piso == 1}
                             type="radio"
                             value={1}
                             className="rounded-md border-2 px-1"
-                            {...register("piso")}
+                            {...register("piso", {
+                                required: true,
+                                setValueAs: (v) => parseInt(v, 10),
+                            })}
                             required
                         />
                         Piso 1
                         <input
-                            id="color"
+                            id="piso2"
                             type="radio"
-                            defaultChecked={pin.piso === 2}
                             value={2}
+                            defaultChecked={pin.piso == 2}
                             className="rounded-md border-2 px-1 ml-6"
-                            {...register("piso")}
+                            {...register("piso", {
+                                required: true,
+                                setValueAs: (v) => parseInt(v, 10), 
+                            })}
                             required
                         />
                         Piso 2
@@ -164,6 +182,16 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
                     <IconSelector selected={selected} setSelected={handleIconSelect} />
                     {errors.icon && <p className="text-red-500">{errors.icon.message}</p>}
                 </div>
+
+                {zones && (
+                    <>
+                        <div className="flex flex-col pb-6">
+                            <label>Zona (opcional)</label>
+                            <ZoneSelector selected={selectedZone} setSelected={handleZoneSelect} zones={zones} />
+                            {errors.icon && <p className="text-red-500">{errors.icon.message}</p>}
+                        </div>
+                    </>
+                )}
 
 
                 <div className="flex flex-row justify-end gap-4">
