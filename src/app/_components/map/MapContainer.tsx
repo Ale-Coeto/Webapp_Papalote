@@ -175,7 +175,7 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                         <div ref={divRef}>
                             <img
 
-                                src={variant == tag1 ? "/Mapa_A.png" : "/Mapa_B.png"}
+                                src={variant == tag1 ? "/Mapa_B.png" : "/Mapa_A.png"}
                                 alt="Map or Background"
                                 className="w-full h-full object-contain bg-gray-200"
                             />
