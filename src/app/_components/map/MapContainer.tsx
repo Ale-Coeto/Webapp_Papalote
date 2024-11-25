@@ -20,7 +20,7 @@ import EditPinsModal from "./EditPinsModal";
 import { iconDictionary } from "~/utils/icons";
 
 const MapContainer = ({ zones }: { zones?: Zone[] }) => {
-    const divRef = useRef<HTMLDivElement>(null); // Reference for the div
+    const divRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const { data: pines, isLoading, error } = api.pin.getPins.useQuery();
     const [pins, setPins] = useState<Pin[]>(pines ?? []);
@@ -46,7 +46,6 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
         if (dimensions.width > 0 && dimensions.height > 0 && pines) {
             const updatedPins = pines.map((pin) => ({
                 ...pin,
-                // Scale positions based on percentage of current dimensions
                 x: (pin.x / 100) * dimensions.width,
                 y: (pin.y / 100) * dimensions.height,
             }));
@@ -55,9 +54,8 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
     }, [pines, dimensions]);
 
     useEffect(() => {
-
         const timeout = setTimeout(updateDimensions, 1000);
-        updateDimensions(); // Set initial dimensions
+        updateDimensions();
         window.addEventListener("resize", updateDimensions);
 
         return () => {
@@ -65,8 +63,6 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
             window.removeEventListener("resize", updateDimensions);
         };
     }, []);
-
-
 
     const [openEdit, setOpenEdit] = useState(false);
     const [selectedPin, setSelectedPin] = useState<Pin>();
@@ -106,8 +102,6 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
         setSelected(variant === tag1 ? tag2 : tag1);
     }, [variant]);
 
-
-
     const [activePinId, setActivePinId] = useState<number | null>(null);
 
     const handleDragStart = (event: DragStartEvent) => {
@@ -123,13 +117,12 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
         setPins((prevPins) =>
 
             prevPins.map((pin) => {
-                const pinSize = 80 * scale; // Base size (40px) scaled dynamically
+                const pinSize = 80 * scale;
                 const x = pin.x + delta.x;
                 const y = pin.y + delta.y;
 
-                // Boundaries accounting for the dynamically scaled pin size
-                const boundX = Math.min(Math.max(0, x), dimensions.width - pinSize);
-                const boundY = Math.min(Math.max(0, y), dimensions.height - pinSize);
+                const boundX = Math.min(Math.max((pinSize / 2), x), dimensions.width - (pinSize / 2));
+                const boundY = Math.min(Math.max((pinSize / 2), y), dimensions.height - (pinSize / 2));
 
                 return (
                     pin.id === pinId
@@ -147,17 +140,7 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
     }
 
     const { toast } = useToast();
-    // const handleSave = () => {
 
-    //     const copyPins = [...pins];
-    //     pins.map((copyPins) => {
-    //         copyPins.x = (copyPins.x / dimensions.width) * 100;
-    //         copyPins.y = (copyPins.y / dimensions.height) * 100;
-    //     })
-
-    //     updatePins.mutate(copyPins);
-    //     updateDimensions();
-    // }
     const handleSave = () => {
         const updatedPins = pins.map((pin) => ({
             ...pin,
@@ -165,8 +148,8 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
             y: (pin.y / dimensions.height) * 100,
         }));
 
-        updatePins.mutate(updatedPins); // Mutate the updated pins
-        setPins(updatedPins); // Update the local state
+        updatePins.mutate(updatedPins);
+        setPins(updatedPins);
         updateDimensions();
     };
 
@@ -218,7 +201,7 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                                             style={{
                                                 backgroundColor: activePin.color,
                                             }}
-                                            className="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg"
+                                            className="bg-blue-500 rounded-full w-6 h-6 flex items-center justify-center text-white shadow-lg"
                                         >
                                             {/* {activePin} */}
                                         </div>
