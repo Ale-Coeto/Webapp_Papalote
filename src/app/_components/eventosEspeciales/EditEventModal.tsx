@@ -5,6 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { useEffect } from "react";
 import { InsigniasCard } from "../card/InsigniasCard";
+import { useToast } from "~/hooks/use-toast";
 interface EditEventModalProps {
   onClose: () => void;
   event: SpecialEvent;
@@ -23,8 +24,42 @@ export default function EditEventModal({
   } = useForm<SpecialEvent>({
     defaultValues: {},
   });
-  const editEvent = api.specialEvent.updateSpecialEvent.useMutation();
-  const deleteEvent = api.specialEvent.deleteSpecialEvent.useMutation();
+
+  const { toast } = useToast();
+  const utils = api.useUtils();
+
+  const editEvent = api.specialEvent.updateSpecialEvent.useMutation({
+    onSuccess: async (data) => {
+      toast({
+        title: `¡Evento actualizado!`,
+        description: `${data.name}`,
+      });
+      await utils.specialEvent.invalidate();
+    },
+    onError: (error) => {
+      toast({
+        title: `Error al actualizar el evento`,
+        description: error.message || JSON.stringify(error),
+      });
+    },
+  });
+
+  const deleteEvent = api.specialEvent.deleteSpecialEvent.useMutation({
+    onSuccess: async (data) => {
+      toast({
+        title: `¡Evento eliminado!`,
+        description: `${data.name}`,
+      });
+      await utils.specialEvent.invalidate();
+    },
+    onError: (error) => {
+      toast({
+        title: `Error al eliminar el evento`,
+        description: error.message || JSON.stringify(error),
+      });
+    },
+  });
+
   const startDate = event.start_date.toISOString().slice(0, 10);
   const endDate = event.end_date.toISOString().slice(0, 10);
 

@@ -3,6 +3,7 @@ import Button from "../Button";
 import AddButton from "../form/AddButton";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
+import { useToast } from "~/hooks/use-toast";
 
 export default function NewEventModal({ onClose }: { onClose: () => void }) {
   const {
@@ -10,7 +11,24 @@ export default function NewEventModal({ onClose }: { onClose: () => void }) {
     register,
     setValue,
   } = useForm<SpecialEvent>({ defaultValues: {} });
-  const addEvent = api.specialEvent.createSpecialEvent.useMutation();
+
+  const { toast } = useToast();
+  const utils = api.useUtils();
+  const addEvent = api.specialEvent.createSpecialEvent.useMutation({
+    onSuccess: async (data) => {
+      toast({
+        title: `¡Evento creado!`,
+        description: `${data.name}`,
+      });
+      await utils.specialEvent.invalidate();
+    },
+    onError: (error) => {
+      toast({
+        title: `Error al crear el evento`,
+        description: error.message || JSON.stringify(error),
+      });
+    },
+  });
 
   const onSubmit: SubmitHandler<SpecialEvent> = (data: SpecialEvent) => {
     addEvent.mutate({
