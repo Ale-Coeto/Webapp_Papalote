@@ -100,8 +100,10 @@ export const AnswerCard = ({
           <button
             className="mt-2 rounded-lg bg-red-500 p-2 text-white"
             onClick={() => {
-              deleteAnswer.mutate({ id: answerId });
-              setOpenModalDelete(false);
+              if (deleteAnswer.isIdle) {
+                deleteAnswer.mutate({ id: answerId });
+                setOpenModalDelete(false);
+              }
             }}
           >
             Borrar

@@ -96,8 +96,10 @@ export const ZoneCard = ({ zoneId }: { zoneId: number }) => {
           <button
             className="mt-2 rounded-lg bg-red-500 p-2 text-white"
             onClick={() => {
-              deleteZone.mutate({ id: zoneId });
-              setOpenModalDelete(false);
+              if (deleteZone.isIdle) {
+                deleteZone.mutate({ id: zoneId });
+                setOpenModalDelete(false);
+              }
             }}
           >
             Borrar

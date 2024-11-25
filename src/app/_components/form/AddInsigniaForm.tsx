@@ -13,7 +13,7 @@ export const AddInsigniaForm = ({
   onCompleted,
   defaultValues,
   zone_id = undefined,
-  event_id = undefined
+  event_id = undefined,
 }: {
   onCompleted: () => void;
   defaultValues?: FormData;
@@ -35,7 +35,8 @@ export const AddInsigniaForm = ({
       insigniaName: defaultValues?.insigniaName,
       insigniaNfcCode: defaultValues?.insigniaNfcCode,
       insigniaSpecialEventId: defaultValues?.insigniaSpecialEventId ?? event_id,
-      zone_id: defaultValues?.zone_id ?? (zone_id === undefined ? null: zone_id),
+      zone_id:
+        defaultValues?.zone_id ?? (zone_id === undefined ? null : zone_id),
     },
   });
 
@@ -69,6 +70,8 @@ export const AddInsigniaForm = ({
         title: "Insignia Borrada!",
         description: `Nombre: ${data.name}}`,
       });
+      await utils.insignia.invalidate();
+      onCompleted();
     },
     onError: (error) => {
       toast({
@@ -80,12 +83,12 @@ export const AddInsigniaForm = ({
   });
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log("we are trying to create an insignia with this data: ")
+    console.log("we are trying to create an insignia with this data: ");
     console.log(data);
-    createInsignia.mutate(data);
+    if (createInsignia.isIdle) createInsignia.mutate(data);
   };
 
-  console.log("hello")
+  console.log("hello");
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="m-3 flex flex-col gap-y-4 text-gris">
@@ -154,10 +157,13 @@ export const AddInsigniaForm = ({
           {defaultValues?.insigniaId && (
             <button
               className="w-full rounded-lg bg-red-500 p-3 text-white"
+              type="button"
               onClick={() => {
-                deleteInsignia.mutate({
-                  id: defaultValues.insigniaId ?? -1,
-                });
+                if (deleteInsignia.isIdle) {
+                  deleteInsignia.mutate({
+                    id: defaultValues.insigniaId ?? -1,
+                  });
+                }
               }}
             >
               Eliminar insignia

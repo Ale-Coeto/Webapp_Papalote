@@ -60,7 +60,9 @@ export const AddZoneForm = ({
   });
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    createZone.mutate(data);
+    if (createZone.isIdle) {
+      createZone.mutate(data);
+    }
   };
 
   return (

@@ -72,7 +72,7 @@ export const AddAnswerForm = ({
   });
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    createRespuesta.mutate(data);
+    if (createRespuesta.isIdle) createRespuesta.mutate(data);
   };
 
   return (

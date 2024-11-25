@@ -53,7 +53,7 @@ export const AddQuestionForm = ({
   });
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    createPregunta.mutate(data);
+    if (createPregunta.isIdle) createPregunta.mutate(data);
   };
 
   return (
