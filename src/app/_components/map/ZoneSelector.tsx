@@ -7,6 +7,8 @@ const ZoneSelector = ({ selected, setSelected, zones }: {
     zones: Zone[];
 }) => {
 
+    console.log("selected", selected);
+
     return (
         <>
             <Select
@@ -15,8 +17,7 @@ const ZoneSelector = ({ selected, setSelected, zones }: {
                 }}
                 value={selected.toString()}
             >
-                {/* {zones && (
-                    <> */}
+
 
                 <SelectTrigger>
                     <SelectValue placeholder="Selecciona un ícono" />
@@ -36,8 +37,6 @@ const ZoneSelector = ({ selected, setSelected, zones }: {
                         </SelectItem>
                     ))}
                 </SelectContent>
-                {/* </> */}
-                {/* )} */}
 
             </Select>
         </>
