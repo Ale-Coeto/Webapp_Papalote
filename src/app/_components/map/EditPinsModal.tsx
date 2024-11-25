@@ -1,7 +1,6 @@
 "use client";
 import type { Pin, Zone } from "@prisma/client";
 import Button from "../Button";
-import AddButton from "../form/AddButton";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { useToast } from "~/hooks/use-toast";
@@ -9,6 +8,7 @@ import { useEffect, useState } from "react";
 import IconSelector from "./IconSelector";
 import { iconDictionary } from "../../../utils/icons";
 import ZoneSelector from "./ZoneSelector";
+
 interface EditPinsModalProps {
     onClose: () => void;
     pin: Pin;
@@ -125,7 +125,6 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
                     <label>Nombre del pin</label>
                     <input
                         id="nombre"
-                        // defaultValue={pin.name}
                         type="text"
                         className="w-full rounded-md border-2 px-1"
                         {...register("name")}
@@ -144,7 +143,7 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
                             className="rounded-md border-2 px-1"
                             {...register("piso", {
                                 required: true,
-                                setValueAs: (v) => parseInt(v, 10),
+                                setValueAs: (v:string) => parseInt(v, 10),
                             })}
                             required
                         />
@@ -157,7 +156,7 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
                             className="rounded-md border-2 px-1 ml-6"
                             {...register("piso", {
                                 required: true,
-                                setValueAs: (v) => parseInt(v, 10), 
+                                setValueAs: (v:string) => parseInt(v, 10),
                             })}
                             required
                         />
