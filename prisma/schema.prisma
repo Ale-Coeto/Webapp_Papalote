@@ -90,8 +90,8 @@ model Insignia {
   special_event_id Int?
   name             String
   logo             String        @db.Text
-  special_event    SpecialEvent? @relation(fields: [special_event_id], references: [id])
-  zone             Zone?         @relation(fields: [zone_id], references: [id])
+  special_event    SpecialEvent? @relation(fields: [special_event_id], references: [id], onDelete: Cascade)
+  zone             Zone?         @relation(fields: [zone_id], references: [id], onDelete: Cascade)
 
   @@index([zone_id], map: "Insignia_zone_id_fkey")
   @@index([special_event_id], map: "Insignia_special_event_id_fkey")
@@ -109,7 +109,7 @@ model QuestionAnswer {
   zone_id     Int
   answer      String
   question    Question @relation(fields: [question_id], references: [id])
-  zone        Zone     @relation(fields: [zone_id], references: [id])
+  zone        Zone     @relation(fields: [zone_id], references: [id], onDelete: Cascade)
 
   @@unique([question_id, zone_id])
   @@index([question_id], map: "QuestionAnswer_question_id_fkey")
@@ -123,7 +123,7 @@ model Exhibition {
   is_open     Boolean
   image       String  @db.Text
   description String
-  Zone        Zone    @relation(fields: [zone_id], references: [id])
+  Zone        Zone    @relation(fields: [zone_id], references: [id], onDelete: Cascade)
 
   @@index([zone_id], map: "Exhibition_zone_id_fkey")
 }
@@ -164,7 +164,7 @@ model Pin {
   name    String
   piso    Int
   zone_id Int?
-  zone    Zone?  @relation(fields: [zone_id], references: [id])
+  zone    Zone?  @relation(fields: [zone_id], references: [id], onDelete: Cascade)
 
   @@index([zone_id], map: "Pin_zone_id_fkey")
 }
