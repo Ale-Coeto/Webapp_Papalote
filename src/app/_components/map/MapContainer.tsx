@@ -20,7 +20,7 @@ import EditPinsModal from "./EditPinsModal";
 import { iconDictionary } from "~/utils/icons";
 
 const MapContainer = ({ zones }: { zones?: Zone[] }) => {
-    const divRef = useRef<HTMLDivElement>(null); // Reference for the div
+    const divRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const { data: pines, isLoading, error } = api.pin.getPins.useQuery();
     const [pins, setPins] = useState<Pin[]>(pines ?? []);
@@ -32,16 +32,30 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
         }
     };
 
-    useEffect(() => {
-        const updateDimensions = () => {
-            if (divRef.current) {
-                const { width, height } = divRef.current.getBoundingClientRect();
-                setDimensions({ width, height });
-            }
-        };
+    const [scale, setScale] = useState(1);
+    const handleZoom = () => {
+        setScale(Math.min(dimensions.width / 1474, dimensions.height / 1322)); // Use smaller scale for uniform scaling
+    };
 
-        const timeout = setTimeout(updateDimensions, 1000); 
-        updateDimensions(); // Set initial dimensions
+
+    useEffect(() => {
+        if (dimensions.width > 0 && dimensions.height > 0) {
+            handleZoom();
+        }
+
+        if (dimensions.width > 0 && dimensions.height > 0 && pines) {
+            const updatedPins = pines.map((pin) => ({
+                ...pin,
+                x: (pin.x / 100) * dimensions.width,
+                y: (pin.y / 100) * dimensions.height,
+            }));
+            setPins(updatedPins);
+        }
+    }, [pines, dimensions]);
+
+    useEffect(() => {
+        const timeout = setTimeout(updateDimensions, 1000);
+        updateDimensions();
         window.addEventListener("resize", updateDimensions);
 
         return () => {
@@ -49,18 +63,6 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
             window.removeEventListener("resize", updateDimensions);
         };
     }, []);
-
-    useEffect(() => {
-        if (dimensions.width > 0 && dimensions.height > 0 && pines) {
-            const updatedPins = pines.map((pin) => ({
-                ...pin,
-                x: (pin.x * dimensions.width) / 100,
-                y: (pin.y * dimensions.height) / 100,
-            }));
-            setPins(updatedPins);
-        }
-    }, [pines, dimensions]);
-
 
     const [openEdit, setOpenEdit] = useState(false);
     const [selectedPin, setSelectedPin] = useState<Pin>();
@@ -100,8 +102,6 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
         setSelected(variant === tag1 ? tag2 : tag1);
     }, [variant]);
 
-
-
     const [activePinId, setActivePinId] = useState<number | null>(null);
 
     const handleDragStart = (event: DragStartEvent) => {
@@ -117,11 +117,12 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
         setPins((prevPins) =>
 
             prevPins.map((pin) => {
+                const pinSize = 80 * scale;
                 const x = pin.x + delta.x;
                 const y = pin.y + delta.y;
 
-                const boundX = Math.min(Math.max(0, x), dimensions.width - 32);
-                const boundY = Math.min(Math.max(0, y), dimensions.height - 32);
+                const boundX = Math.min(Math.max((pinSize / 2), x), dimensions.width - (pinSize / 2));
+                const boundY = Math.min(Math.max((pinSize / 2), y), dimensions.height - (pinSize / 2));
 
                 return (
                     pin.id === pinId
@@ -139,17 +140,18 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
     }
 
     const { toast } = useToast();
+
     const handleSave = () => {
+        const updatedPins = pins.map((pin) => ({
+            ...pin,
+            x: (pin.x / dimensions.width) * 100,
+            y: (pin.y / dimensions.height) * 100,
+        }));
 
-        const copyPins = [...pins];
-        pins.map((copyPins) => {
-            copyPins.x = (copyPins.x / dimensions.width) * 100;
-            copyPins.y = (copyPins.y / dimensions.height) * 100;
-        })
-
-        updatePins.mutate(copyPins);
+        updatePins.mutate(updatedPins);
+        setPins(updatedPins);
         updateDimensions();
-    }
+    };
 
 
 
@@ -169,13 +171,13 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                 </div>
                 <div className="flex flex-col md:flex-row gap-6 pt-4 h-max">
 
-                    <div className="w-1/2 border h-auto bg-gray-200 relative">
+                    <div className="w-1/2 h-auto relative">
                         <div ref={divRef}>
                             <img
 
                                 src={variant == tag1 ? "/Mapa_A.png" : "/Mapa_B.png"}
                                 alt="Map or Background"
-                                className="w-full h-full object-contain"
+                                className="w-full h-full object-contain bg-gray-200"
                             />
                         </div>
 
@@ -188,7 +190,7 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                                             key={key}
                                             pin={pin}
                                             isDragging={activePinId === pin.id}
-                                            imageRect={dimensions}
+                                            scale={scale}
                                         />
                                     )
                                 ))}
@@ -199,7 +201,7 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                                             style={{
                                                 backgroundColor: activePin.color,
                                             }}
-                                            className="bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg"
+                                            className="bg-blue-500 rounded-full w-6 h-6 flex items-center justify-center text-white shadow-lg"
                                         >
                                             {/* {activePin} */}
                                         </div>

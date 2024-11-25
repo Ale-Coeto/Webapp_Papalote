@@ -9,53 +9,75 @@ import { iconDictionary } from "../../../utils/icons";
 interface PinProps {
     pin: Pin;
     isDragging: boolean;
-    imageRect: { width: number; height: number };
-    // onDragEnd: (id: number, x: number, y: number) => void;
+    scale: number;
 }
 
-const PinIcon: React.FC<PinProps> = ({ pin, isDragging }) => {
+const PinIcon: React.FC<PinProps> = ({ pin, isDragging, scale }) => {
     const { attributes, listeners, setNodeRef } = useDraggable({
         id: `pin-${pin.id}`,
     });
 
     const iconData = iconDictionary[pin.icon];
     const IconComponent = iconData?.icon;
+    const baseSize = 80;
+    const pinSize = baseSize * scale;
 
     const style: React.CSSProperties = {
         position: "absolute",
-        top: pin.y,
-        left: pin.x,
+        top: pin.y - pinSize / 2,
+        left: pin.x - pinSize / 2,
+        width: `${pinSize}px`,
+        height: `${pinSize}px`,
         cursor: "grab",
         opacity: isDragging ? 0 : 1,
         pointerEvents: isDragging ? "none" : "auto",
+        transformOrigin: "center",
     };
 
     return (
-        <div className="z-10">
 
-            <div className="absolute" style={{ ...style, width: "fit-content" }}>
+        <div className="z-10  w-auto">
+
+            <div className="absolute" style={{ ...style, }}>
                 <div
                     ref={setNodeRef}
                     {...listeners}
                     {...attributes}
-                    style={{ backgroundColor: pin.color }}
-                    className="rounded-full w-8 h-8 flex items-center justify-center text-white shadow-lg border-2 border-white z-10 relative"
+                    style={{
+                        backgroundColor: pin.color,
+                        width: `${pinSize}px`,
+                        height: `${pinSize}px`,
+                        borderWidth: `${2 * scale}px`,
+                    }}
+                    className="rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white z-10 relative"
                 >
                     <div className="relative">
-                        {IconComponent && <IconComponent />}
+                        {IconComponent && <IconComponent style={{
+                            fontSize: `${pinSize * 0.5}px`,
+                        }} />}
                     </div>
 
                 </div>
 
                 <div
-                    className="absolute left-1/2 -translate-x-1/2 top-[calc(100%)] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[10px]"
-                    style={{ borderTopColor: pin.color }}
+                    className="absolute left-1/2 -translate-x-1/2 top-[calc(100%)] w-0 h-0 bg-transparent"
+                    style={{
+                        borderLeftWidth: `${pinSize * 0.2}px`,
+                        borderRightWidth: `${pinSize * 0.2}px`,
+                        borderTopWidth: `${pinSize * 0.25}px`,
+                        borderLeftColor: "transparent",
+                        borderRightColor: "transparent",
+                        borderTopColor: pin.color,
+                    }}
                     aria-hidden="true"
                 ></div>
 
                 <div
-                    className="absolute left-1/2 -translate-x-1/2 translate-y-1/3"
-                    style={{ borderTopColor: pin.color }}
+                    className="absolute left-1/2 -translate-x-1/2 translate-y-1/3 text-center"
+                    style={{
+                        fontSize: `${pinSize * 0.55}px`,
+                        color: pin.color,
+                    }}
                     aria-hidden="true"
                 >
                     {pin.name}
