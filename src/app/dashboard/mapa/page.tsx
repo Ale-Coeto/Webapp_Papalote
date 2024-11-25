@@ -4,7 +4,7 @@ import { api } from "~/trpc/server";
 import AddModifyPin from "~/app/_components/map/AddModifyPin";
 
 const MapPage = async () => {
-    const pins = await api.pin.getPins();
+    // const pins = await api.pin.getPins();
    
     const zonas = (await api.zone.get()).map(zone => ({
         ...zone,

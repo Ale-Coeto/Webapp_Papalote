@@ -5,6 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { useEffect } from "react";
 import { InsigniasCard } from "../card/InsigniasCard";
+import { useToast } from "~/hooks/use-toast";
 interface EditEventModalProps {
   onClose: () => void;
   event: SpecialEvent;
@@ -21,12 +22,53 @@ export default function EditEventModal({
     watch,
     reset,
   } = useForm<SpecialEvent>({
-    defaultValues: {},
+    defaultValues: {
+      name: event.name,
+      description: event.description,
+      start_date: (event.start_date),
+      end_date: (event.end_date),
+      image: event.image,
+    },
   });
-  const editEvent = api.specialEvent.updateSpecialEvent.useMutation();
-  const deleteEvent = api.specialEvent.deleteSpecialEvent.useMutation();
+
+  const { toast } = useToast();
+  const utils = api.useUtils();
+
+  const editEvent = api.specialEvent.updateSpecialEvent.useMutation({
+    onSuccess: async (data) => {
+      toast({
+        title: `¡Evento actualizado!`,
+        description: `${data.name}`,
+      });
+      await utils.specialEvent.invalidate();
+    },
+    onError: (error) => {
+      toast({
+        title: `Error al actualizar el evento`,
+        description: error.message || JSON.stringify(error),
+      });
+    },
+  });
+
+  const deleteEvent = api.specialEvent.deleteSpecialEvent.useMutation({
+    onSuccess: async (data) => {
+      toast({
+        title: `¡Evento eliminado!`,
+        description: `${data.name}`,
+      });
+      await utils.specialEvent.invalidate();
+    },
+    onError: (error) => {
+      toast({
+        title: `Error al eliminar el evento`,
+        description: error.message || JSON.stringify(error),
+      });
+    },
+  });
+
   const startDate = event.start_date.toISOString().slice(0, 10);
-  const endDate = event.end_date.toISOString().slice(0, 10);
+  const endDate = event.end_date.toISOString().split("T")[0];
+  console.log("Start date:", startDate);
 
   const handleDelete = () => {
     if (window.confirm("¿Estás seguro que deseas eliminar este evento?")) {
@@ -37,13 +79,13 @@ export default function EditEventModal({
 
   useEffect(() => {
     reset({
-        name: event.name,
-        description: event.description,
-        start_date: new Date(startDate),
-        end_date: new Date(endDate),
-        image: event.image,
+      name: event.name,
+      description: event.description,
+      start_date: event.start_date.toISOString().split("T")[0] as unknown as Date,
+      end_date: event.end_date.toISOString().split("T")[0] as unknown as Date,
+      image: event.image,
     });
-}, [event, reset]);
+  }, [event, reset]);
 
   const onSubmit: SubmitHandler<SpecialEvent> = (data) => {
     editEvent.mutate({
@@ -66,7 +108,7 @@ export default function EditEventModal({
 
   return (
     <div className="flex w-full flex-col px-4 pb-4">
-     <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex w-full flex-col pb-4">
           <label>Nombre del evento</label>
           <input
@@ -83,10 +125,12 @@ export default function EditEventModal({
           <label>Fecha Inicio</label>
           <input
             id="fechaInicio"
-            defaultValue={startDate}
             type="date"
             className="rounded-md border-2 px-1"
-            {...register("start_date")}
+            defaultValue={startDate}
+            {...register("start_date", {
+              required: true,
+            })}
             required
           />
         </div>

@@ -18,6 +18,7 @@ import { FaEdit } from "react-icons/fa";
 import Modal from "../Modal";
 import EditPinsModal from "./EditPinsModal";
 import { iconDictionary } from "~/utils/icons";
+import BeatLoader from "react-spinners/BeatLoader";
 
 const MapContainer = ({ zones }: { zones?: Zone[] }) => {
     const divRef = useRef<HTMLDivElement>(null);
@@ -169,6 +170,8 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                         <FaEdit className="text-lg text-azul hover:text-azul-200" />
                     </div>
                 </div>
+
+
                 <div className="flex flex-col md:flex-row gap-6 pt-4 h-max">
 
                     <div className="w-1/2 h-auto relative">
@@ -181,34 +184,41 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                             />
                         </div>
 
-                        <div className="absolute top-0 left-0 z-10" key={refreshKey}>
+                        {isLoading ? (
+                            <div className="flex w-full flex-col items-center py-10">
+                                <BeatLoader color={"#2DEA6D"} loading={true} size={15} />
+                            </div>
+                        ) : (
 
-                            <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-                                {pins.map((pin, key) => (
-                                    pin.piso === tags[variant] && (
-                                        <PinIcon
-                                            key={key}
-                                            pin={pin}
-                                            isDragging={activePinId === pin.id}
-                                            scale={scale}
-                                        />
-                                    )
-                                ))}
+                            <div className="absolute top-0 left-0 z-10" key={refreshKey}>
 
-                                <DragOverlay>
-                                    {activePin ? (
-                                        <div
-                                            style={{
-                                                backgroundColor: activePin.color,
-                                            }}
-                                            className="bg-blue-500 rounded-full w-6 h-6 flex items-center justify-center text-white shadow-lg"
-                                        >
-                                            {/* {activePin} */}
-                                        </div>
-                                    ) : null}
-                                </DragOverlay>
-                            </DndContext>
-                        </div>
+                                <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+                                    {pins.map((pin, key) => (
+                                        pin.piso === tags[variant] && (
+                                            <PinIcon
+                                                key={key}
+                                                pin={pin}
+                                                isDragging={activePinId === pin.id}
+                                                scale={scale}
+                                            />
+                                        )
+                                    ))}
+
+                                    <DragOverlay>
+                                        {activePin ? (
+                                            <div
+                                                style={{
+                                                    backgroundColor: activePin.color,
+                                                }}
+                                                className="bg-blue-500 rounded-full w-6 h-6 flex items-center justify-center text-white shadow-lg"
+                                            >
+                                                {/* {activePin} */}
+                                            </div>
+                                        ) : null}
+                                    </DragOverlay>
+                                </DndContext>
+                            </div>
+                        )}
                     </div>
 
                     <div className="w-full flex flex-col gap-4">

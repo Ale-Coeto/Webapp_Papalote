@@ -76,7 +76,8 @@ const PinIcon: React.FC<PinProps> = ({ pin, isDragging, scale }) => {
                     className="absolute left-1/2 -translate-x-1/2 translate-y-1/3 text-center"
                     style={{
                         fontSize: `${pinSize * 0.55}px`,
-                        color: pin.color,
+                        color: "white",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
                     }}
                     aria-hidden="true"
                 >
