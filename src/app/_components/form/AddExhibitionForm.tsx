@@ -67,6 +67,7 @@ export const AddExhbitionForm = ({
         description: `Nombre: ${data.name}`,
       });
       await utils.exhibition.getIdsByZone.invalidate();
+      onCompleted();
     },
     onError: (error) => {
       toast({
