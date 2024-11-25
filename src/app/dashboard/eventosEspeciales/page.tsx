@@ -12,13 +12,15 @@ import { api } from "~/trpc/react";
 import type { SpecialEvent } from "@prisma/client";
 import { InsigniasCard } from "~/app/_components/card/InsigniasCard";
 import { FaChevronUp, FaChevronDown } from 'react-icons/fa';
+import BeatLoader from "react-spinners/BeatLoader";
 
 export default function EventosEspeciales() {
   const [openNew, setOpenNew] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<SpecialEvent>();
 
-  const events = api.specialEvent.getSpecialEvents.useQuery();
+  const { data: events, isLoading: isLoading } = api.specialEvent.getSpecialEvents.useQuery();
+
 
   const handleEdit = (event: SpecialEvent) => {
     setSelectedEvent(event);
@@ -28,7 +30,7 @@ export default function EventosEspeciales() {
   // State to track which events are showing InsigniasCard
   //const [insigniasVisibility, setInsigniasVisibility] = useState<{ [key: number]: boolean }>({});
   // State to track which events are showing InsigniasCard
-const [insigniasVisibility, setInsigniasVisibility] = useState<Record<number, boolean>>({});
+  const [insigniasVisibility, setInsigniasVisibility] = useState<Record<number, boolean>>({});
 
 
   const toggleInsigniasVisibility = (eventId: number) => {
@@ -51,46 +53,53 @@ const [insigniasVisibility, setInsigniasVisibility] = useState<Record<number, bo
         />
       </div>
 
-      <div className="flex flex-col gap-4 py-5 lg:px-40">
-        {events.data?.map((event, key) => (
-          <div key={key}>
-            <Card key={key}>
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <h1 className="font-semibold text-texto"> {event.name} </h1>
-                  <p className="text-texto"> {event.description} </p>
-                </div>
-                <div className="flex flex-row gap-6">
-                  <div className="items-left flex flex-col justify-center text-sm text-gris">
-                    <div>{event.start_date.toISOString().slice(0, 10)}</div>
-                    <div>{event.end_date.toISOString().slice(0, 10)}</div>
+      {isLoading ? (
+        <div className="flex w-full flex-col items-center py-10">
+          <BeatLoader color={"#2DEA6D"} loading={true} size={15} />
+        </div>
+      ) : (
+        events &&
+        <div className="flex flex-col gap-4 py-5 lg:px-40">
+          {events.map((event, key) => (
+            <div key={key}>
+              <Card key={key}>
+                <div className="flex flex-row justify-between">
+                  <div className="flex flex-col">
+                    <h1 className="font-semibold text-texto"> {event.name} </h1>
+                    <p className="text-texto"> {event.description} </p>
                   </div>
+                  <div className="flex flex-row gap-6">
+                    <div className="items-left flex flex-col justify-center text-sm text-gris">
+                      <div>{event.start_date.toISOString().slice(0, 10)}</div>
+                      <div>{event.end_date.toISOString().slice(0, 10)}</div>
+                    </div>
 
-                  <button onClick={() => handleEdit(event)}>
-                    <FaEdit className="text-lg text-azul hover:text-azul-200" />
+                    <button onClick={() => handleEdit(event)}>
+                      <FaEdit className="text-lg text-azul hover:text-azul-200" />
+                    </button>
+                  </div>
+                </div>
+                {/* Button to trigger the InsigniasCard visibility toggle */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => toggleInsigniasVisibility(event.id)}
+                    className=" text-white p-2 rounded flex items-center justify-center"
+                  >
+                    {insigniasVisibility[event.id] ? (
+                      <FaChevronUp className="mr-2 text-blue-500" />
+                    ) : (
+                      <FaChevronDown className="mr-2 text-blue-500" />
+                    )}
+                    {/*insigniasVisibility[event.id] ? "Ocultar Insignias" : "Ver Insignias"*/}
                   </button>
                 </div>
-              </div>
-              {/* Button to trigger the InsigniasCard visibility toggle */}
-              <div className="flex justify-center">
-              <button
-                onClick={() => toggleInsigniasVisibility(event.id)}
-                className=" text-white p-2 rounded flex items-center justify-center"
-              >
-                {insigniasVisibility[event.id] ? (
-                  <FaChevronUp className="mr-2 text-blue-500" />
-                ) : (
-                  <FaChevronDown className="mr-2 text-blue-500" />
-                )}
-                {/*insigniasVisibility[event.id] ? "Ocultar Insignias" : "Ver Insignias"*/}
-              </button>
+                {insigniasVisibility[event.id] && <InsigniasCard className="mt-2 shadow-lg border border-gray-200 rounded-lg" eventId={event.id} />}
+              </Card>
             </div>
-            {insigniasVisibility[event.id] && <InsigniasCard className="mt-2 shadow-lg border border-gray-200 rounded-lg" eventId={event.id} />}
-            </Card>
-          </div>
-        ))}
+          ))}
 
-      </div>
+        </div>
+      )}
 
       <Modal
         title={"Nuevo Evento"}
