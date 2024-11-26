@@ -60,6 +60,7 @@ const exhibitionNames = {
     "5": "Soy",
     "6": "Expreso",
     "7": "Pequeños",
+    "8": "ES",
 };
 
 const exhibitionColors = {
@@ -69,6 +70,7 @@ const exhibitionColors = {
     "5": "#D50032", // Color for Soy
     "6": "#FF8200", // Color for Expreso
     "7": "#009CA6", // Color for Pequeños
+    "8": "#808080", // Color for Eventos Especiales
     };
 
     interface ExhibitionVisitProps {
@@ -119,8 +121,7 @@ const exhibitionColors = {
             <CardHeader>
                 <CardTitle>Visitas por zonas - {formatDate()}</CardTitle>
                 <CardDescription>
-                    Una visita es considerada: Personas que han tomado exhibiciones con los primos y
-                    obtenido una insignia al completar la exhibición.
+                    Una visita por zona es registrada cuando una persona completa una exhibición con un Primo y obtiene una insignia de zona.
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-end">
@@ -133,6 +134,7 @@ const exhibitionColors = {
                                 tickLine={false}
                                 tickMargin={10}
                                 axisLine={false}
+                                angle={chartData.length >= 7 ? -20 : 0} // Rotación en grados
                             />
                             <ChartTooltip
                                 cursor={false}
