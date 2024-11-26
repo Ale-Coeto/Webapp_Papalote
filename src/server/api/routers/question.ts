@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  protectedModificationProcedure,
+} from "~/server/api/trpc";
 import {
   existingQuestionSchema,
   existingQuestionAnswerSchema,
@@ -41,7 +45,7 @@ export const questionRouter = createTRPCRouter({
       return await ctx.db.question.findUnique({ where: { id: input.id } });
     }),
 
-  createOrModify: protectedProcedure
+  createOrModify: protectedModificationProcedure
     .input(existingQuestionSchema)
     .mutation(async ({ input, ctx }) => {
       if (input.questionId) {
@@ -60,13 +64,13 @@ export const questionRouter = createTRPCRouter({
       });
     }),
 
-  delete: protectedProcedure
+  delete: protectedModificationProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
       return ctx.db.question.delete({ where: { id: input.id } });
     }),
 
-  createOrModifyAnswer: protectedProcedure
+  createOrModifyAnswer: protectedModificationProcedure
     .input(existingQuestionAnswerSchema)
     .mutation(async ({ input, ctx }) => {
       try {
@@ -121,7 +125,7 @@ export const questionRouter = createTRPCRouter({
       });
     }),
 
-  deleteAnswer: protectedProcedure
+  deleteAnswer: protectedModificationProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
       return ctx.db.questionAnswer.delete({ where: { id: input.id } });
