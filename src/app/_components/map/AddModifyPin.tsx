@@ -18,6 +18,7 @@ const AddModifyPin = ({ zones }: { zones?: Zone[] }) => {
                     onClick={() => {
                         setOpenNew(true);
                     }}
+                    isAdd
                 />
 
             </div>

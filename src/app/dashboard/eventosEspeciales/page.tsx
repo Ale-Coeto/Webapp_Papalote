@@ -3,7 +3,7 @@
 import AddButton from "~/app/_components/Button";
 import Title from "~/app/_components/Title";
 import Card from "~/app/_components/card/Card";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import Modal from "~/app/_components/Modal";
 import { useState } from "react";
 import NewEventModal from "~/app/_components/eventosEspeciales/NewEventModal";
@@ -13,6 +13,7 @@ import type { SpecialEvent } from "@prisma/client";
 import { InsigniasCard } from "~/app/_components/card/InsigniasCard";
 import { FaChevronUp, FaChevronDown } from 'react-icons/fa';
 import BeatLoader from "react-spinners/BeatLoader";
+import { useToast } from "~/hooks/use-toast";
 
 export default function EventosEspeciales() {
   const [openNew, setOpenNew] = useState(false);
@@ -40,6 +41,31 @@ export default function EventosEspeciales() {
     }));
   };
 
+  const { toast } = useToast();
+  const utils = api.useUtils();
+  
+  const deleteEvent = api.specialEvent.deleteSpecialEvent.useMutation({
+    onSuccess: async (data) => {
+      toast({
+        title: `¡Evento eliminado!`,
+        description: `${data.name}`,
+      });
+      await utils.specialEvent.invalidate();
+    },
+    onError: (error) => {
+      toast({
+        title: `Error al eliminar el evento`,
+        description: error.message || JSON.stringify(error),
+      });
+    },
+  });
+  
+  const handleDelete = (event: SpecialEvent) => {
+    if (window.confirm("¿Estás seguro que deseas eliminar este evento?")) {
+      deleteEvent.mutate(event.id);
+    }
+  };
+
   return (
     <div className="h-full bg-fondo p-10">
       <div className="mb-10 flex flex-row items-center justify-between">
@@ -50,6 +76,7 @@ export default function EventosEspeciales() {
           onClick={() => {
             setOpenNew(true);
           }}
+          isAdd
         />
       </div>
 
@@ -76,6 +103,9 @@ export default function EventosEspeciales() {
 
                     <button onClick={() => handleEdit(event)}>
                       <FaEdit className="text-lg text-azul hover:text-azul-200" />
+                    </button>
+                    <button onClick={() => handleDelete(event)}>
+                      <FaTrashAlt className="text-lg text-red-500 hover:text-red-400" />
                     </button>
                   </div>
                 </div>
