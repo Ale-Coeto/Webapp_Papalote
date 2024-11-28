@@ -76,30 +76,7 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
             })
         },
     });
-    const deletePin = api.pin.deletePin.useMutation({
-        onSuccess: async (data) => {
-            toast({
-                title: `¡Pin eliminado!`,
-                description: `${data.name}`,
-            })
-            await utils.pin.invalidate();
-        },
-        onError: (error) => {
-            toast({
-                title: `Error al eliminar el pin`,
-                description: error.message || JSON.stringify(error),
-            })
-        },
-    });
-
-
-    const handleDelete = () => {
-        if (window.confirm("¿Estás seguro que deseas eliminar este pin?")) {
-            deletePin.mutate(pin.id);
-            onClose();
-        }
-    };
-    console.log(pin.piso)
+    
     const onSubmit: SubmitHandler<Pin> = (data) => {
         editPin.mutate({
             id: pin.id,
@@ -194,7 +171,7 @@ const EditPinsModal = ({ onClose, pin, zones }: EditPinsModalProps) => {
 
 
                 <div className="flex flex-row justify-end gap-4">
-                    <Button label="Eliminar" onClick={handleDelete} danger full />
+                    {/* <Button label="Eliminar" onClick={handleDelete} danger full /> */}
                     <Button submit label="Guardar" full />
                 </div>
             </form>

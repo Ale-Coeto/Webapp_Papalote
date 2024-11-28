@@ -50,32 +50,10 @@ export default function EditEventModal({
     },
   });
 
-  const deleteEvent = api.specialEvent.deleteSpecialEvent.useMutation({
-    onSuccess: async (data) => {
-      toast({
-        title: `¡Evento eliminado!`,
-        description: `${data.name}`,
-      });
-      await utils.specialEvent.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: `Error al eliminar el evento`,
-        description: error.message || JSON.stringify(error),
-      });
-    },
-  });
-
+  
   const startDate = event.start_date.toISOString().slice(0, 10);
   const endDate = event.end_date.toISOString().split("T")[0];
-  console.log("Start date:", startDate);
 
-  const handleDelete = () => {
-    if (window.confirm("¿Estás seguro que deseas eliminar este evento?")) {
-      deleteEvent.mutate(event.id);
-      onClose();
-    }
-  };
 
   useEffect(() => {
     reset({
@@ -195,7 +173,7 @@ export default function EditEventModal({
           )}
         </div>
         <div className="flex flex-row justify-end gap-4">
-          <Button label="Eliminar" onClick={handleDelete} danger full />
+          {/* <Button label="Eliminar" onClick={handleDelete} danger full /> */}
           <Button submit label="Guardar" full />
         </div>
       </form>

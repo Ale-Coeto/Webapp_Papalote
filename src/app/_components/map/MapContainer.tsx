@@ -14,7 +14,7 @@ import Button from "../Button";
 import { api } from "~/trpc/react";
 import { useToast } from "~/hooks/use-toast";
 import Card from "../card/Card";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaTrash, FaTrashAlt } from "react-icons/fa";
 import Modal from "../Modal";
 import EditPinsModal from "./EditPinsModal";
 import { iconDictionary } from "~/utils/icons";
@@ -140,6 +140,30 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
         setOpenEdit(true);
     }
 
+    const deletePin = api.pin.deletePin.useMutation({
+        onSuccess: async (data) => {
+            toast({
+                title: `¡Pin eliminado!`,
+                description: `${data.name}`,
+            })
+            await utils.pin.invalidate();
+        },
+        onError: (error) => {
+            toast({
+                title: `Error al eliminar el pin`,
+                description: error.message || JSON.stringify(error),
+            })
+        },
+    });
+
+
+    const handleDelete = (pin: Pin) => {
+        if (window.confirm("¿Estás seguro que deseas eliminar este pin?")) {
+            deletePin.mutate(pin.id);
+            // onClose();
+        }
+    };
+
     const { toast } = useToast();
 
     const handleSave = () => {
@@ -219,6 +243,12 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                                 </DndContext>
                             </div>
                         )}
+                        <p className="text-sm text-slate-500">W: {dimensions.width.toFixed()}px, H: {dimensions.height.toFixed()}px</p>
+
+
+                        <div className="mt-4 flex">
+                            <Button label="Guardar posiciones" onClick={handleSave} />
+                        </div>
                     </div>
 
                     <div className="w-full flex flex-col gap-4">
@@ -251,6 +281,9 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                                             <button onClick={() => handleEdit(pin)}>
                                                 <FaEdit className="text-lg text-azul hover:text-azul-200" />
                                             </button>
+                                            <button onClick={() => handleDelete(pin)}>
+                                                <FaTrashAlt className="text-lg text-red-500 hover:text-red-400" />
+                                            </button>
                                         </div>
                                     </div>
                                 </Card>
@@ -260,12 +293,7 @@ const MapContainer = ({ zones }: { zones?: Zone[] }) => {
                 </div>
 
 
-                <p className="text-sm text-slate-500">W: {dimensions.width.toFixed()}px, H: {dimensions.height.toFixed()}px</p>
 
-
-                <div className="mt-4 flex">
-                    <Button label="Guardar posiciones" onClick={handleSave} />
-                </div>
 
 
             </div>
